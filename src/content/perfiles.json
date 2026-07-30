@@ -1,0 +1,26 @@
+[
+  {
+    "id": "constructora",
+    "nombre": "Constructoras",
+    "razon": "Volumen y entrega programada. Pedís por camionada y llega a la obra el día que lo necesitás, no cuando se pueda.",
+    "orden": 1
+  },
+  {
+    "id": "arquitecto",
+    "nombre": "Arquitectos",
+    "razon": "Cortes a la medida del plano y especies finas. Mandás la lista de despiece y la madera llega dimensionada, cepillada y curada.",
+    "orden": 2
+  },
+  {
+    "id": "maderera",
+    "nombre": "Madereras",
+    "razon": "Compra directa al aserradero, sin intermediario. Surtido de las cuatro especies en el mismo envío.",
+    "orden": 3
+  },
+  {
+    "id": "ferreteria",
+    "nombre": "Ferreterías",
+    "razon": "Reabastecimiento recurrente y mezcla de productos. Tabla, machimbre y bolillo en una sola camionada.",
+    "orden": 4
+  }
+]

@@ -1,0 +1,5 @@
+# pnpm 11 lee sus ajustes desde aquí, no desde package.json.
+# Solo estos paquetes tienen permiso de ejecutar scripts de instalación.
+allowBuilds:
+  esbuild: true
+  sharp: true

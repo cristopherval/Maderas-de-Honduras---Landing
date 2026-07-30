@@ -1,0 +1,30 @@
+[
+  {
+    "id": "cortes-a-la-medida",
+    "nombre": "Cortes a la medida",
+    "que_hace": "Cortamos a la medida que traigas en tu plano. No hay que reaserrar nada en obra ni pagar desperdicio por medidas que no ocupás.",
+    "especificacion": "Espesor, ancho y largo según lista de despiece",
+    "orden": 1
+  },
+  {
+    "id": "secado",
+    "nombre": "Secado",
+    "que_hace": "Bajamos la humedad de la madera antes de que salga. Es lo que evita que la pieza se tuerza o se abra después de instalada.",
+    "especificacion": "Se define con el uso final: interior, piso o carpintería vista",
+    "orden": 2
+  },
+  {
+    "id": "cepillado",
+    "nombre": "Cepillado",
+    "que_hace": "Dejamos la cara lisa y la escuadría pareja. Llega lista para instalar o para recibir acabado.",
+    "especificacion": "Una cara, dos caras o cuatro caras",
+    "orden": 3
+  },
+  {
+    "id": "curado",
+    "nombre": "Curado",
+    "que_hace": "Tratamos la madera contra insecto y hongo. Es el paso que se pide cuando la pieza va a estar expuesta o va a durar años a la vista.",
+    "especificacion": "Se aplica antes del despacho, sobre pieza ya dimensionada",
+    "orden": 4
+  }
+]
