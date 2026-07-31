@@ -1,0 +1,85 @@
+---
+import Base from '@/layouts/Base.astro';
+import TituloSeccion from '@/components/TituloSeccion.astro';
+import MarcadorFoto from '@/components/MarcadorFoto.astro';
+import { obtenerProceso } from '@/lib/contenido';
+import { MINIMO_ENVIO_PT } from '@/data/empresa';
+import { formatearPT } from '@/lib/piesTablares';
+
+const etapas = await obtenerProceso();
+---
+
+<Base
+  titulo="De la troza al despacho"
+  descripcion="Recepción de troza, aserrado, dimensionado, secado, cepillado y curado, despacho. La secuencia real de la planta."
+  contexto={{ tipo: 'proceso' }}
+>
+  <section class="plano pb-16 pt-12 lg:pb-20 lg:pt-16">
+    <TituloSeccion rotulo="Proceso" nivel="h1">
+      De la troza al despacho
+      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
+        Seis pasos. Los hacemos todos en la misma planta, y por eso la pieza sale con la medida y el
+        acabado que pediste, no con lo que había.
+      </p>
+    </TituloSeccion>
+  </section>
+
+  <!--
+    El único efecto scroll-driven del sitio: la línea que conecta las etapas se
+    dibuja conforme se avanza. Representa la troza recorriendo la línea de
+    producción, por eso se permite. Donde no haya soporte, la línea aparece
+    completa desde el principio.
+  -->
+  <div class="plano pb-20 lg:pb-28">
+    <ol class="relative">
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute bottom-0 left-[0.4375rem] top-0 hidden w-px bg-verde-musgo lg:block"
+      >
+        <span class="linea-proceso block h-full w-full bg-verde-monte"></span>
+      </div>
+
+      {
+        etapas.map((etapa) => (
+          <li class="relative grid gap-6 border-b-hair border-verde-musgo/40 py-10 last:border-b-0 lg:grid-cols-[2rem_1fr_minmax(0,24rem)] lg:gap-10 lg:py-14">
+            <span
+              aria-hidden="true"
+              class="hidden lg:mt-2 lg:block lg:h-[0.9375rem] lg:w-[0.9375rem] lg:shrink-0 lg:border-hair lg:border-verde-monte lg:bg-cal"
+            />
+
+            <div>
+              <p class="font-dato text-spec uppercase text-verde-monte">
+                Etapa {String(etapa.orden).padStart(2, '0')} / 0{etapas.length}
+              </p>
+              <h2 class="mt-3 text-display-1 ancho-expandido text-verde-tinta">{etapa.nombre}</h2>
+              <p class="mt-4 max-w-medida text-base text-verde-tinta">{etapa.descripcion}</p>
+            </div>
+
+            <MarcadorFoto foto={etapa.foto} tono={etapa.orden % 2 === 0 ? 'tinta' : 'monte'} />
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <section class="bg-verde-monte py-20 lg:py-24">
+    <div class="plano flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h2 class="revelar-titular max-w-[20ch] text-display-1 ancho-expandido text-cal">
+          Mandanos tu lista de despiece
+        </h2>
+        <p class="mt-5 max-w-medida text-lead text-aserrin">
+          Desde {formatearPT(MINIMO_ENVIO_PT)} pies tablares sale con nuestro transporte a la
+          dirección de entrega.
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href="/cotizar" class="boton-cotizar">
+          Pedir cotización
+          <span class="flecha" aria-hidden="true">&rarr;</span>
+        </a>
+        <a href="/productos" class="boton-linea-claro">Ver productos</a>
+      </div>
+    </div>
+  </section>
+</Base>

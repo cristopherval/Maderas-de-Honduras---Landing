@@ -1,0 +1,55 @@
+---
+import Base from '@/layouts/Base.astro';
+import ListaEnviada from '@/components/isla/ListaEnviada';
+import { HORARIO, TELEFONOS, urlTelefono } from '@/data/empresa';
+---
+
+<Base
+  titulo="Solicitud enviada"
+  descripcion="Recibimos tu solicitud de cotización."
+  contexto={{ tipo: 'cotizar' }}
+  sinBarra
+  noIndexar
+>
+  <section class="bg-verde-tinta py-20 lg:py-28">
+    <div class="plano grid gap-12 lg:grid-cols-[1fr_minmax(0,26rem)] lg:gap-16">
+      <div>
+        <p class="rotulo-claro">Solicitud enviada</p>
+        <h1 class="mt-5 max-w-[16ch] text-display-hero ancho-expandido text-cal">
+          Listo. Te llamamos con el precio.
+        </h1>
+        <p class="mt-8 max-w-medida text-lead text-aserrin">
+          La solicitud salió por WhatsApp. Te contestamos en horario de planta: {
+            HORARIO[0]?.dias.toLowerCase()
+          } de {HORARIO[0]?.abre} a {HORARIO[0]?.cierra}, y {HORARIO[1]?.dias.toLowerCase()} de {
+            HORARIO[1]?.abre
+          } a {HORARIO[1]?.cierra}.
+        </p>
+
+        <p class="mt-8 max-w-medida text-base text-aserrin">
+          Si no te llegó a abrir WhatsApp, llamanos directo:
+        </p>
+        <ul class="mt-4 flex flex-wrap gap-3">
+          {
+            TELEFONOS.map((telefono) => (
+              <li>
+                <a href={urlTelefono(telefono)} class="boton-linea-claro">
+                  {telefono}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="mt-12 flex flex-wrap gap-3">
+          <a href="/" class="boton-cotizar">Volver al inicio</a>
+          <a href="/productos" class="boton-linea-claro">Ver productos</a>
+        </div>
+      </div>
+
+      <div>
+        <ListaEnviada client:load />
+      </div>
+    </div>
+  </section>
+</Base>

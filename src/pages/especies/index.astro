@@ -1,0 +1,94 @@
+---
+import Base from '@/layouts/Base.astro';
+import TituloSeccion from '@/components/TituloSeccion.astro';
+import MarcadorFoto from '@/components/MarcadorFoto.astro';
+import { obtenerEspecies } from '@/lib/contenido';
+
+const especies = await obtenerEspecies();
+
+const TONO_MARCADOR = {
+  tinta: 'tinta',
+  monte: 'monte',
+  musgo: 'musgo',
+  aserrin: 'aserrin',
+} as const;
+---
+
+<Base
+  titulo="Especies"
+  descripcion="Pino, roble, caoba y cedro. Para qué sirve cada una en obra, en qué acabados se entrega y en qué productos se convierte."
+  contexto={{ tipo: 'inicio' }}
+>
+  <section class="plano pb-16 pt-12 lg:pb-20 lg:pt-16">
+    <TituloSeccion rotulo="Especies" nivel="h1">
+      Cuatro especies, cuatro trabajos distintos
+      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
+        No es lo mismo pedir madera para encofrado que para una puerta. Acá está para qué sirve cada
+        una, en qué acabados sale de la planta y en qué se convierte.
+      </p>
+    </TituloSeccion>
+  </section>
+
+  <div class="plano pb-20 lg:pb-28">
+    {
+      especies.map((especie, indice) => (
+        <article
+          class:list={[
+            'tarjeta-especie grid gap-8 border-t-hair border-verde-tinta py-10 lg:grid-cols-2 lg:gap-14 lg:py-14',
+          ]}
+        >
+          <div class:list={['marco-especie', indice % 2 === 1 && 'lg:order-last']}>
+            <MarcadorFoto foto={especie.foto} tono={TONO_MARCADOR[especie.tono]} />
+          </div>
+
+          <div class="flex flex-col gap-6">
+            <div>
+              <p class="eyebrow-especie font-dato text-spec uppercase text-verde-monte">
+                Especie {String(especie.orden).padStart(2, '0')} / 0{especies.length} &middot;{' '}
+                {especie.dato_dominante.valor}
+              </p>
+              <h2 class="mt-3 text-display-1 ancho-expandido text-verde-tinta">
+                <a href={`/especies/${especie.slug}`} class="hover:text-verde-monte">
+                  {especie.nombre}
+                </a>
+              </h2>
+              <p class="mt-4 max-w-medida text-base text-verde-tinta">{especie.descripcion}</p>
+            </div>
+
+            <dl class="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+              <div>
+                <dt class="font-dato text-spec-sm uppercase text-verde-monte">Se usa en</dt>
+                <dd class="mt-2">
+                  <ul>
+                    {especie.usos.map((uso) => (
+                      <li class="font-dato text-dato-sm text-verde-tinta">{uso}</li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+              <div>
+                <dt class="font-dato text-spec-sm uppercase text-verde-monte">Acabados</dt>
+                <dd class="mt-2 font-dato text-dato-sm text-verde-tinta">
+                  {especie.acabados.join(' · ')}
+                </dd>
+                <dt class="mt-4 font-dato text-spec-sm uppercase text-verde-monte">Productos</dt>
+                <dd class="mt-2 font-dato text-dato-sm text-verde-tinta">
+                  {especie.productos.length} de 11
+                </dd>
+              </div>
+            </dl>
+
+            <p>
+              <a href={`/especies/${especie.slug}`} class="boton-linea">
+                Ver la ficha del {especie.nombre.toLowerCase()}
+                <span class="flecha" aria-hidden="true">
+                  &rarr;
+                </span>
+              </a>
+            </p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</Base>

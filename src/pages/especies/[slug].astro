@@ -1,0 +1,157 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '@/layouts/Base.astro';
+import MarcadorFoto from '@/components/MarcadorFoto.astro';
+import Calculadora from '@/components/isla/Calculadora';
+import { obtenerEspecies, productosDeEspecie, ETIQUETA_CATEGORIA } from '@/lib/contenido';
+import { MINIMO_ENVIO_PT } from '@/data/empresa';
+import { formatearPT } from '@/lib/piesTablares';
+
+export const getStaticPaths = (async () => {
+  const especies = await obtenerEspecies();
+  return especies.map((especie) => ({ params: { slug: especie.slug }, props: { especie } }));
+}) satisfies GetStaticPaths;
+
+const { especie } = Astro.props;
+
+const todas = await obtenerEspecies();
+const otras = todas.filter((otra) => otra.slug !== especie.slug);
+const productos = await productosDeEspecie(especie.slug);
+const opcionesEspecie = todas.map(({ slug, nombre, acabados }) => ({ slug, nombre, acabados }));
+
+const TONO_MARCADOR = {
+  tinta: 'tinta',
+  monte: 'monte',
+  musgo: 'musgo',
+  aserrin: 'aserrin',
+} as const;
+---
+
+<Base
+  titulo={`${especie.nombre} — ${especie.dato_dominante.valor}`}
+  descripcion={`${especie.descripcion} Cortada a la medida, con acabados ${especie.acabados.join(', ')}. Cotización por volumen.`}
+  contexto={{ tipo: 'especie', nombre: especie.nombre }}
+>
+  <nav aria-label="Ruta" class="plano pt-8">
+    <ol class="flex flex-wrap items-center gap-2 font-dato text-spec-sm uppercase text-verde-monte">
+      <li><a href="/especies" class="hover:text-ocote-tinta">Especies</a></li>
+      <li aria-hidden="true">/</li>
+      <li aria-current="page" class="text-verde-tinta">{especie.nombre}</li>
+    </ol>
+  </nav>
+
+  <!-- Ficha -->
+  <section class="plano grid gap-10 pb-16 pt-8 lg:grid-cols-[1fr_minmax(0,26rem)] lg:gap-14 lg:pb-20">
+    <div>
+      <p class="rotulo">
+        Especie {String(especie.orden).padStart(2, '0')} / 0{todas.length}
+      </p>
+      <h1 class="mt-4 text-display-hero ancho-expandido text-verde-tinta">{especie.nombre}</h1>
+      <p class="mt-6 max-w-medida text-lead text-verde-tinta">{especie.descripcion}</p>
+
+      <h2 class="rotulo mt-12">Se usa en</h2>
+      <ul class="mt-4 border-t-hair border-verde-tinta">
+        {
+          especie.usos.map((uso) => (
+            <li class="border-b-hair border-verde-musgo/50 py-3 font-dato text-dato text-verde-tinta">
+              {uso}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div>
+      <MarcadorFoto foto={especie.foto} tono={TONO_MARCADOR[especie.tono]} prioritaria />
+
+      <dl class="mt-8 border-t-hair border-verde-tinta">
+        <div class="flex justify-between gap-4 border-b-hair border-verde-musgo/50 py-3">
+          <dt class="font-dato text-spec-sm uppercase text-verde-monte">
+            {especie.dato_dominante.etiqueta}
+          </dt>
+          <dd class="text-right font-dato text-dato-sm text-verde-tinta">
+            {especie.dato_dominante.valor}
+          </dd>
+        </div>
+        <div class="flex justify-between gap-4 border-b-hair border-verde-musgo/50 py-3">
+          <dt class="font-dato text-spec-sm uppercase text-verde-monte">Acabados</dt>
+          <dd class="text-right font-dato text-dato-sm text-verde-tinta">
+            {especie.acabados.join(' · ')}
+          </dd>
+        </div>
+        <div class="flex justify-between gap-4 border-b-hair border-verde-musgo/50 py-3">
+          <dt class="font-dato text-spec-sm uppercase text-verde-monte">Mínimo por envío</dt>
+          <dd class="text-right font-dato text-dato-sm text-verde-tinta">
+            {formatearPT(MINIMO_ENVIO_PT)} pt
+          </dd>
+        </div>
+        <div class="flex justify-between gap-4 border-b-hair border-verde-musgo/50 py-3">
+          <dt class="font-dato text-spec-sm uppercase text-verde-monte">Corte</dt>
+          <dd class="text-right font-dato text-dato-sm text-verde-tinta">A la medida del plano</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- En qué se convierte -->
+  <section class="border-y-hair border-verde-musgo/40 bg-aserrin py-16 lg:py-20">
+    <div class="plano">
+      <h2 class="revelar-titular text-display-1 ancho-expandido text-verde-tinta">
+        En qué se convierte
+      </h2>
+      <ul class="mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          productos.map((producto) => (
+            <li class="border-t-hair border-verde-monte pt-4">
+              <a href={`/productos#${producto.slug}`} class="group block">
+                <p class="font-dato text-spec-sm uppercase text-verde-monte">
+                  {ETIQUETA_CATEGORIA[producto.categoria]}
+                </p>
+                <p class="mt-1 text-display-2 ancho-normal text-verde-tinta group-hover:text-verde-monte">
+                  {producto.nombre}
+                </p>
+                <p class="mt-2 font-dato text-dato-sm text-verde-monte">
+                  {producto.unidad ? `Se vende por ${producto.unidad}` : 'Se cotiza por volumen'}
+                </p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Calculadora con la especie ya puesta -->
+  <section class="plano py-16 lg:py-24">
+    <h2 class="revelar-titular max-w-[22ch] text-display-1 ancho-expandido text-verde-tinta">
+      Armá tu lista de {especie.nombre.toLowerCase()}
+    </h2>
+    <p class="mt-4 max-w-medida text-lead text-verde-tinta">
+      Meté espesor, ancho, largo y piezas. La lista te sigue por todo el sitio.
+    </p>
+    <div class="mt-10">
+      <Calculadora especies={opcionesEspecie} especieInicial={especie.slug} client:visible />
+    </div>
+  </section>
+
+  <!-- Otras especies -->
+  <section class="bg-verde-tinta py-16 lg:py-20">
+    <div class="plano">
+      <h2 class="rotulo-claro">Otras especies</h2>
+      <ul class="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-3">
+        {
+          otras.map((otra) => (
+            <li class="border-t-hair border-verde-musgo pt-4">
+              <a href={`/especies/${otra.slug}`} class="group block">
+                <p class="text-display-2 ancho-expandido text-cal group-hover:text-ocote">
+                  {otra.nombre}
+                </p>
+                <p class="mt-2 text-sm text-aserrin">{otra.resumen}</p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>

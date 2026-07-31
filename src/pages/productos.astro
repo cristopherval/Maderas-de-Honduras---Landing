@@ -1,0 +1,118 @@
+---
+import Base from '@/layouts/Base.astro';
+import TituloSeccion from '@/components/TituloSeccion.astro';
+import { obtenerEspecies, obtenerServicios, productosPorCategoria } from '@/lib/contenido';
+import { PRODUCTOS_CANTIDAD } from '@/data/empresa';
+
+const grupos = await productosPorCategoria();
+const servicios = await obtenerServicios();
+const especies = await obtenerEspecies();
+
+const nombreEspecie = (slug: string): string =>
+  especies.find((especie) => especie.slug === slug)?.nombre ?? slug;
+---
+
+<Base
+  titulo="Productos"
+  descripcion={`Los ${PRODUCTOS_CANTIDAD} productos que salen de la planta, agrupados por caso de uso: construcción, industria y embalaje, combustible y derivados. Más cortes a la medida, secado, cepillado y curado.`}
+  contexto={{ tipo: 'inicio' }}
+>
+  <section class="plano pb-16 pt-12 lg:pb-20 lg:pt-16">
+    <TituloSeccion rotulo="Productos" nivel="h1">
+      {PRODUCTOS_CANTIDAD} productos, agrupados por lo que vas a hacer con ellos
+      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
+        Todo se cotiza por volumen, especie y acabado. Si la medida que ocupás no está en la lista,
+        se corta.
+      </p>
+    </TituloSeccion>
+  </section>
+
+  {
+    grupos.map((grupo, indice) => (
+      <section
+        class:list={[
+          'border-t-hair border-verde-musgo/40 py-16 lg:py-20',
+          indice % 2 === 1 ? 'bg-aserrin' : 'bg-cal',
+        ]}
+      >
+        <div class="plano">
+          <div class="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
+            <h2 class="revelar-titular text-display-1 ancho-expandido text-verde-tinta">
+              {grupo.etiqueta}
+            </h2>
+            <p class="font-dato text-dato-sm uppercase text-verde-monte">{grupo.resumen}</p>
+          </div>
+
+          <dl class="mt-10 border-t-hair border-verde-tinta">
+            {grupo.productos.map((producto) => (
+              <div
+                id={producto.slug}
+                class="grid scroll-mt-28 gap-x-8 gap-y-3 border-b-hair border-verde-musgo/50 py-7 lg:grid-cols-[18rem_1fr_14rem]"
+              >
+                <dt>
+                  <span class="font-dato text-spec-sm uppercase text-verde-monte">
+                    {String(producto.orden).padStart(2, '0')}
+                  </span>
+                  <span class="mt-1 block text-display-2 ancho-normal text-verde-tinta">
+                    {producto.nombre}
+                  </span>
+                </dt>
+                <dd class="max-w-medida text-base text-verde-tinta">{producto.que_es}</dd>
+                <dd class="font-dato text-dato-sm text-verde-monte lg:text-right">
+                  <span class="block uppercase">
+                    {producto.unidad ? `Se vende por ${producto.unidad}` : 'Se cotiza por volumen'}
+                  </span>
+                  <span class="mt-2 block">
+                    {producto.especies.map((slug, posicion) => (
+                      <>
+                        {posicion > 0 && <span aria-hidden="true"> · </span>}
+                        <a href={`/especies/${slug}`} class="enlace">
+                          {nombreEspecie(slug)}
+                        </a>
+                      </>
+                    ))}
+                  </span>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+    ))
+  }
+
+  <!-- Los cuatro servicios de procesamiento, al final -->
+  <section class="bg-verde-tinta py-20 lg:py-28">
+    <div class="plano">
+      <TituloSeccion rotulo="Procesamiento" variante="claro">
+        Lo hacemos a tu especificación
+        <p slot="cuerpo" class="max-w-medida text-lead text-cal">
+          Cualquiera de los {PRODUCTOS_CANTIDAD} productos puede salir con estos cuatro pasos. Es lo
+          que separa una planta de una bodega.
+        </p>
+      </TituloSeccion>
+
+      <dl class="mt-12 border-t-hair border-verde-musgo">
+        {
+          servicios.map((servicio) => (
+            <div class="grid gap-x-8 gap-y-2 border-b-hair border-verde-musgo/60 py-6 lg:grid-cols-[16rem_1fr_18rem]">
+              <dt class="text-display-2 ancho-normal text-cal">{servicio.nombre}</dt>
+              <dd class="max-w-medida text-base text-aserrin">{servicio.que_hace}</dd>
+              <dd class="font-dato text-dato-sm uppercase text-aserrin lg:text-right">
+                {servicio.especificacion}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <div class="mt-12 flex flex-wrap gap-3">
+        <a href="/cotizar" class="boton-cotizar">
+          Pedir cotización
+          <span class="flecha" aria-hidden="true">&rarr;</span>
+        </a>
+        <a href="/proceso" class="boton-linea-claro">Ver el proceso de la planta</a>
+      </div>
+    </div>
+  </section>
+</Base>

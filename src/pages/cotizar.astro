@@ -1,0 +1,48 @@
+---
+import Base from '@/layouts/Base.astro';
+import TituloSeccion from '@/components/TituloSeccion.astro';
+import FormularioCotizacion from '@/components/isla/FormularioCotizacion';
+import { MINIMO_ENVIO_PT, TELEFONOS, urlTelefono } from '@/data/empresa';
+import { formatearPT } from '@/lib/piesTablares';
+---
+
+<Base
+  titulo="Pedir cotización"
+  descripcion="Mandanos tu lista de medidas y te llamamos con el precio. Cotización por volumen, especie y acabado."
+  contexto={{ tipo: 'cotizar' }}
+  sinBarra
+>
+  <section class="plano pb-12 pt-12 lg:pt-16">
+    <TituloSeccion rotulo="Cotización" nivel="h1">
+      Pedir cotización
+      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
+        Con el teléfono basta para arrancar. Mientras más medidas nos pases, más rápido sale el
+        precio. Despachamos desde {formatearPT(MINIMO_ENVIO_PT)} pies tablares con transporte propio.
+      </p>
+    </TituloSeccion>
+  </section>
+
+  <section class="plano pb-20 lg:pb-28">
+    <FormularioCotizacion client:load />
+  </section>
+
+  <section class="border-t-hair border-verde-musgo/40 bg-aserrin py-14">
+    <div class="plano flex flex-wrap items-center justify-between gap-6">
+      <p class="max-w-medida text-base text-verde-tinta">
+        ¿Preferís hablar? Llamanos en horario de planta: lunes a viernes de 7:00 a.m. a 5:00 p.m. y
+        sábados de 7:00 a.m. a 12:00 m.
+      </p>
+      <ul class="flex flex-wrap gap-3">
+        {
+          TELEFONOS.map((telefono) => (
+            <li>
+              <a href={urlTelefono(telefono)} class="boton-linea">
+                {telefono}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>

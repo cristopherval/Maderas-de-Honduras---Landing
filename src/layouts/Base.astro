@@ -22,9 +22,11 @@ interface Props {
   contexto: Parameters<typeof mensajeDeContexto>[0];
   /** `/cotizar` y `/gracias` ya muestran la lista completa; ahí sobra la barra. */
   sinBarra?: boolean;
+  /** `/gracias` y el 404 no tienen por qué estar en el índice. */
+  noIndexar?: boolean;
 }
 
-const { titulo, descripcion, contexto, sinBarra = false } = Astro.props;
+const { titulo, descripcion, contexto, sinBarra = false, noIndexar = false } = Astro.props;
 
 const sitio = Astro.site ?? new URL('https://maderasdehonduras.hn');
 const canonica = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', sitio);
@@ -77,6 +79,7 @@ if (MAPA_LAT !== null && MAPA_LNG !== null) {
     <title>{tituloCompleto}</title>
     <meta name="description" content={descripcion} />
     <link rel="canonical" href={canonica.href} />
+    {noIndexar && <meta name="robots" content="noindex, follow" />}
 
     <link rel="icon" href="/logo.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#0E2A1D" />
