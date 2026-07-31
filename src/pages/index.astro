@@ -161,10 +161,7 @@ const PASOS_COMPRA = [
             class="tarjeta-especie flex flex-col border-t-hair border-verde-tinta pt-6"
           >
             <div class="marco-especie">
-              <MarcadorFoto
-                foto={especie.foto}
-                tono={especie.tono === 'aserrin' ? 'aserrin' : especie.tono}
-              />
+              <MarcadorFoto foto={especie.foto} tono={especie.tono} proporcion="4/5" />
             </div>
             <p class="eyebrow-especie mt-5 font-dato text-spec-sm uppercase text-verde-monte">
               {especie.dato_dominante.valor}

@@ -170,9 +170,9 @@
     background-image: repeating-linear-gradient(
       to bottom,
       theme('colors.verde-musgo') 0 1px,
-      transparent 1px 12px
+      transparent 1px 6px
     );
-    opacity: 0.35;
+    opacity: 0.5;
   }
 
   /* --- Enlaces de texto -------------------------------------------- */

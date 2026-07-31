@@ -17,10 +17,25 @@ interface Props {
   tono?: 'monte' | 'tinta' | 'musgo' | 'aserrin';
   /** La primera imagen visible de una página no se difiere. */
   prioritaria?: boolean;
+  /**
+   * Fuerza la proporción, ignorando la del contenido. Se usa en las grillas de
+   * varias columnas: ahí las proporciones distintas desalinean los títulos y se
+   * leen como descuido. La variedad de encuadre se aprovecha en las fichas,
+   * donde cada foto está sola.
+   */
+  proporcion?: ProporcionFoto;
   class?: string;
 }
 
-const { foto, tono = 'monte', prioritaria = false, class: clase = '' } = Astro.props;
+const {
+  foto,
+  tono = 'monte',
+  prioritaria = false,
+  proporcion,
+  class: clase = '',
+} = Astro.props;
+
+const proporcionFinal = proporcion ?? foto.proporcion;
 
 // Clases literales para que el escáner de Tailwind las vea.
 const CLASE_PROPORCION: Record<ProporcionFoto, string> = {
@@ -30,11 +45,13 @@ const CLASE_PROPORCION: Record<ProporcionFoto, string> = {
   '3/2': 'aspect-[3/2]',
 };
 
+// El tono `aserrin` lleva borde: sin él se pierde contra el fondo `cal` y el
+// marcador se lee como un hueco en la maqueta en vez de como un bloque.
 const CLASE_TONO = {
   monte: 'bg-verde-monte text-aserrin',
   tinta: 'bg-verde-tinta text-aserrin',
   musgo: 'bg-verde-musgo text-verde-tinta',
-  aserrin: 'bg-aserrin text-verde-monte',
+  aserrin: 'bg-aserrin text-verde-monte border-hair border-verde-monte',
 } as const;
 
 const fotos = import.meta.glob<{ default: ImageMetadata }>(
@@ -56,13 +73,13 @@ const imagen = cargador ? (await cargador()).default : undefined;
       loading={prioritaria ? 'eager' : 'lazy'}
       decoding={prioritaria ? 'sync' : 'async'}
       fetchpriority={prioritaria ? 'high' : 'auto'}
-      class:list={['marcador-foto h-full w-full object-cover', CLASE_PROPORCION[foto.proporcion], clase]}
+      class:list={['marcador-foto h-full w-full object-cover', CLASE_PROPORCION[proporcionFinal], clase]}
     />
   ) : (
     <div
       class:list={[
         'marcador-foto flex w-full flex-col justify-between gap-4 p-4',
-        CLASE_PROPORCION[foto.proporcion],
+        CLASE_PROPORCION[proporcionFinal],
         CLASE_TONO[tono],
         clase,
       ]}

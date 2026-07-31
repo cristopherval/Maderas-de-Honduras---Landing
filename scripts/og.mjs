@@ -39,7 +39,7 @@ const pino = (transform) =>
   `<g transform="${transform}">${CUERPOS_PINO.map((d) => `<path d="${d}"/>`).join('')}</g>`;
 
 const marca = `
-  <g transform="translate(88 74) scale(0.95)">
+  <g transform="translate(80 34) scale(1.45)">
     <g fill="${CAL}">
       ${pino('translate(26 63.7) scale(0.78)')}
       ${pino('translate(94 63.7) scale(0.78)')}
@@ -59,10 +59,10 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
 
   ${marca}
 
-  <text x="240" y="118" font-family="Arial, Helvetica, sans-serif" font-size="26"
-        font-weight="700" letter-spacing="4" fill="${ASERRIN}">MADERAS DE HONDURAS</text>
-  <text x="240" y="152" font-family="Arial, Helvetica, sans-serif" font-size="22"
-        letter-spacing="2" fill="${VERDE_MONTE}">ASERRADERO Y PLANTA PROCESADORA</text>
+  <text x="290" y="110" font-family="Arial, Helvetica, sans-serif" font-size="30"
+        font-weight="700" letter-spacing="4" fill="${CAL}">MADERAS DE HONDURAS</text>
+  <text x="290" y="148" font-family="Consolas, Courier New, monospace" font-size="22"
+        letter-spacing="2" fill="${ASERRIN}">ASERRADERO Y PLANTA PROCESADORA</text>
 
   <line x1="88" y1="212" x2="1112" y2="212" stroke="${VERDE_MONTE}" stroke-width="2"/>
 
