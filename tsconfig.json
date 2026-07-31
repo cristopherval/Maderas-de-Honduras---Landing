@@ -4,7 +4,7 @@
   "exclude": ["dist", "node_modules"],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "react",
+    "jsxImportSource": "preact",
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noUnusedLocals": true,
@@ -12,7 +12,12 @@
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      // Las islas se escriben importando de "react"; en tiempo de build y de
+      // chequeo eso resuelve a preact/compat. Ver la nota en astro.config.mjs.
+      "react": ["./node_modules/preact/compat/"],
+      "react-dom": ["./node_modules/preact/compat/"],
+      "react/jsx-runtime": ["./node_modules/preact/jsx-runtime/"]
     }
   }
 }

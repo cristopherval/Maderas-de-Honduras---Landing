@@ -1,0 +1,46 @@
+---
+/**
+ * Titular de sección con su rótulo de margen.
+ *
+ * Es lo único que se revela al hacer scroll (animación 4 de las siete). El
+ * contenido que va debajo aparece ya puesto, sin animar.
+ */
+interface Props {
+  /** Rótulo corto del riel del margen. Va en monoespaciada, versalita. */
+  rotulo: string;
+  /** Número de la secuencia. Solo donde de verdad hay secuencia. */
+  numero?: string;
+  /** `claro` sobre fondo oscuro. */
+  variante?: 'claro' | 'oscuro';
+  /** Nivel semántico del encabezado. */
+  nivel?: 'h1' | 'h2' | 'h3';
+  id?: string;
+}
+
+const { rotulo, numero, variante = 'oscuro', nivel = 'h2', id } = Astro.props;
+
+const Titular = nivel;
+const colorRotulo = variante === 'claro' ? 'text-aserrin' : 'text-verde-monte';
+const colorTitular = variante === 'claro' ? 'text-cal' : 'text-verde-tinta';
+const colorCinta = variante === 'claro' ? 'opacity-25' : 'opacity-35';
+---
+
+<div class="con-riel">
+  <div class="hidden lg:flex lg:flex-col lg:items-start lg:gap-3">
+    <span class:list={['font-dato text-spec-sm uppercase', colorRotulo]}>{rotulo}</span>
+    {numero && <span class:list={['font-dato text-dato-lg', colorRotulo]}>{numero}</span>}
+    <span class:list={['cinta-metrica mt-1 w-3 flex-1', colorCinta]} aria-hidden="true"></span>
+  </div>
+
+  <div>
+    <p class:list={['font-dato text-spec-sm uppercase lg:hidden', colorRotulo]}>
+      {numero ? `${numero} · ${rotulo}` : rotulo}
+    </p>
+    <Titular id={id} class:list={['revelar-titular mt-3 text-display-1 ancho-expandido lg:mt-0', colorTitular]}>
+      <slot />
+    </Titular>
+    <div class="mt-6">
+      <slot name="cuerpo" />
+    </div>
+  </div>
+</div>

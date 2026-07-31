@@ -106,6 +106,10 @@ export default {
         hair: '1px',
       },
 
+      textDecorationThickness: {
+        hair: '1px',
+      },
+
       keyframes: {
         'revelar-linea': {
           from: { clipPath: 'inset(100% 0 0 0)', transform: 'translateY(0.18em)' },

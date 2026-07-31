@@ -1,0 +1,30 @@
+---
+import Estrella from '@/components/Estrella.astro';
+
+/**
+ * El divisor único del sitio: una regla cortada al centro por las cinco
+ * estrellas de la marca. Aparece UNA sola vez, en la portada. La otra aparición
+ * de la estrella es el indicador de umbral de la barra fija. No hay una tercera.
+ */
+interface Props {
+  variante?: 'claro' | 'oscuro';
+}
+
+const { variante = 'oscuro' } = Astro.props;
+const colorLinea = variante === 'claro' ? 'bg-verde-musgo' : 'bg-verde-musgo/50';
+const colorEstrella = variante === 'claro' ? 'text-aserrin' : 'text-verde-monte';
+---
+
+<div class="plano" role="presentation">
+  <div class="flex items-center gap-5 py-4">
+    <span class:list={['h-px flex-1', colorLinea]}></span>
+    <span class:list={['flex items-center gap-2.5', colorEstrella]}>
+      <Estrella tamano={9} />
+      <Estrella tamano={9} />
+      <Estrella tamano={13} />
+      <Estrella tamano={9} />
+      <Estrella tamano={9} />
+    </span>
+    <span class:list={['h-px flex-1', colorLinea]}></span>
+  </div>
+</div>

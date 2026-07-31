@@ -1,0 +1,315 @@
+---
+import Base from '@/layouts/Base.astro';
+import TituloSeccion from '@/components/TituloSeccion.astro';
+import FranjaEspecificacion from '@/components/FranjaEspecificacion.astro';
+import DivisorEstrellas from '@/components/DivisorEstrellas.astro';
+import MarcadorFoto from '@/components/MarcadorFoto.astro';
+import Calculadora from '@/components/isla/Calculadora';
+import ResumenCierre from '@/components/isla/ResumenCierre';
+import { obtenerEspecies, obtenerPerfiles, obtenerServicios } from '@/lib/contenido';
+import { ANIO_PLANTA_PROPIA, MINIMO_ENVIO_PT } from '@/data/empresa';
+import { formatearPT } from '@/lib/piesTablares';
+
+const especies = await obtenerEspecies();
+const servicios = await obtenerServicios();
+const perfiles = await obtenerPerfiles();
+
+const opcionesEspecie = especies.map(({ slug, nombre, acabados }) => ({ slug, nombre, acabados }));
+const [destacada, ...secundarias] = especies;
+
+// Secuencia de carga del héroe. Cierra en 1,120 ms.
+const LINEAS_TITULAR = ['Pino, roble, caoba', 'y cedro. Procesados', 'a tu medida.'];
+
+const PASOS_COMPRA = [
+  {
+    numero: '01',
+    titulo: 'Cotizás',
+    texto: 'Mandás la lista de medidas y piezas. Si traés plano, mejor: cortamos a esa medida.',
+  },
+  {
+    numero: '02',
+    titulo: 'Te llamamos con precio',
+    texto: 'Revisamos volumen, especie y acabado, y te damos el precio por teléfono.',
+  },
+  {
+    numero: '03',
+    titulo: 'Despachamos',
+    texto: `Desde ${formatearPT(MINIMO_ENVIO_PT)} pies tablares sale con nuestro transporte a la dirección de entrega.`,
+  },
+];
+---
+
+<Base
+  titulo="Aserradero y planta procesadora en Olancho"
+  descripcion={`Pino, roble, caoba y cedro cortados a tu medida. Secado, cepillado y curado en planta propia. Despachamos por camionada desde ${formatearPT(MINIMO_ENVIO_PT)} pies tablares con transporte propio.`}
+  contexto={{ tipo: 'inicio' }}
+>
+  <!-- 1. Héroe calificador -->
+  <section class="plano pb-14 pt-12 lg:pb-20 lg:pt-20">
+    <p class="rotulo heroe-aparece" style="--retraso:0ms">
+      Aserradero &middot; Km 60, carretera a Olancho &middot; Planta propia desde {
+        ANIO_PLANTA_PROPIA
+      }
+    </p>
+
+    <h1 class="mt-6 text-display-hero ancho-expandido text-verde-tinta">
+      {
+        LINEAS_TITULAR.map((linea, indice) => (
+          <span class="heroe-linea" style={`--retraso:${60 + indice * 90}ms`}>
+            {linea}
+          </span>
+        ))
+      }
+    </h1>
+
+    <p
+      class="heroe-aparece mt-8 max-w-medida text-lead text-verde-tinta"
+      style="--retraso:420ms"
+    >
+      Despachamos por camionada desde {formatearPT(MINIMO_ENVIO_PT)} pies tablares, con transporte
+      propio. Armá tu lista aquí y te la cotizamos.
+    </p>
+
+    <div class="mt-12 grid gap-10 lg:grid-cols-[7fr_5fr] lg:gap-12">
+      <div class="heroe-aparece" style="--retraso:560ms">
+        <Calculadora especies={opcionesEspecie} client:load />
+      </div>
+
+      <div class="heroe-aparece flex flex-col justify-between gap-8" style="--retraso:560ms">
+        <div>
+          <h2 class="rotulo">Capacidad de planta</h2>
+          <ul class="mt-4">
+            {
+              servicios.map((servicio) => (
+                <li class="border-b-hair border-verde-musgo/40 py-3 first:border-t-hair first:border-verde-musgo/40">
+                  <span class="font-display text-display-2 ancho-normal text-verde-tinta">
+                    {servicio.nombre}
+                  </span>
+                  <span class="mt-1 block font-dato text-dato-sm text-verde-monte">
+                    {servicio.especificacion}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <a href="/cotizar" class="boton-cotizar">
+            Pedir cotización
+            <span class="flecha" aria-hidden="true">&rarr;</span>
+          </a>
+          <a href="/productos" class="boton-linea">Ver los 11 productos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Franja de especificación -->
+  <FranjaEspecificacion retraso={620} />
+
+  <!-- 3. Especies -->
+  <section class="plano py-20 lg:py-28">
+    <TituloSeccion rotulo="Especies" id="especies">
+      Cuatro especies, cuatro trabajos distintos
+      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
+        No es lo mismo pedir para encofrado que para una puerta. Cada una se corta, se seca y se
+        entrega distinto.
+      </p>
+    </TituloSeccion>
+
+    {
+      destacada && (
+        <a
+          href={`/especies/${destacada.slug}`}
+          class="tarjeta-especie mt-12 grid gap-6 border-t-hair border-verde-tinta pt-6 lg:grid-cols-2 lg:gap-10"
+        >
+          <div class="marco-especie">
+            <MarcadorFoto foto={destacada.foto} tono="monte" />
+          </div>
+          <div class="flex flex-col justify-between gap-6">
+            <div>
+              <p class="eyebrow-especie font-dato text-spec uppercase text-verde-monte">
+                {destacada.dato_dominante.etiqueta} &middot; {destacada.dato_dominante.valor}
+              </p>
+              <h3 class="mt-3 text-display-1 ancho-expandido text-verde-tinta">
+                {destacada.nombre}
+              </h3>
+              <p class="mt-4 max-w-medida text-base text-verde-tinta">{destacada.descripcion}</p>
+            </div>
+            <ul class="flex flex-wrap gap-x-4 gap-y-1">
+              {destacada.usos.map((uso) => (
+                <li class="font-dato text-dato-sm text-verde-monte">{uso}</li>
+              ))}
+            </ul>
+            <span class="font-dato text-dato-sm uppercase text-ocote-tinta underline underline-offset-4">
+              Ver la ficha del {destacada.nombre.toLowerCase()}
+              <span class="flecha" aria-hidden="true">
+                &rarr;
+              </span>
+            </span>
+          </div>
+        </a>
+      )
+    }
+
+    <div class="mt-12 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        secundarias.map((especie) => (
+          <a
+            href={`/especies/${especie.slug}`}
+            class="tarjeta-especie flex flex-col border-t-hair border-verde-tinta pt-6"
+          >
+            <div class="marco-especie">
+              <MarcadorFoto
+                foto={especie.foto}
+                tono={especie.tono === 'aserrin' ? 'aserrin' : especie.tono}
+              />
+            </div>
+            <p class="eyebrow-especie mt-5 font-dato text-spec-sm uppercase text-verde-monte">
+              {especie.dato_dominante.valor}
+            </p>
+            <h3 class="mt-2 text-display-2 ancho-expandido text-verde-tinta">{especie.nombre}</h3>
+            <p class="mt-3 flex-1 text-sm text-verde-tinta">{especie.resumen}</p>
+            <span class="mt-5 font-dato text-spec-sm uppercase text-ocote-tinta underline underline-offset-4">
+              Ver ficha
+              <span class="flecha" aria-hidden="true">
+                &rarr;
+              </span>
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 4. Capacidad de procesamiento -->
+  <section class="border-y-hair border-verde-musgo/40 bg-aserrin py-20 lg:py-28">
+    <div class="plano">
+      <TituloSeccion rotulo="Capacidad">
+        Tenemos planta, no bodega
+        <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
+          Un revendedor te entrega lo que le llegó. Nosotros cortamos, secamos, cepillamos y curamos
+          acá mismo, así que la pieza sale como la pediste.
+        </p>
+      </TituloSeccion>
+
+      <dl class="mt-12 border-t-hair border-verde-monte">
+        {
+          servicios.map((servicio) => (
+            <div class="grid gap-x-8 gap-y-2 border-b-hair border-verde-monte/40 py-6 lg:grid-cols-[16rem_1fr_18rem]">
+              <dt class="text-display-2 ancho-normal text-verde-tinta">{servicio.nombre}</dt>
+              <dd class="max-w-medida text-base text-verde-tinta">{servicio.que_hace}</dd>
+              <dd class="font-dato text-dato-sm uppercase text-verde-monte lg:text-right">
+                {servicio.especificacion}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- El divisor único del sitio -->
+  <div class="py-12 lg:py-16">
+    <DivisorEstrellas />
+  </div>
+
+  <!-- 5. Para quién es esto -->
+  <section class="plano pb-20 lg:pb-28">
+    <TituloSeccion rotulo="Clientes">
+      Para quién es esto
+      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
+        Vendemos por volumen. Si estás buscando cinco reglas para un arreglo en casa, no somos tu
+        proveedor; si comprás por camionada, sí.
+      </p>
+    </TituloSeccion>
+
+    <dl class="mt-12 border-t-hair border-verde-tinta">
+      {
+        perfiles.map((perfil) => (
+          <div class="grid gap-x-8 gap-y-1 border-b-hair border-verde-musgo/50 py-6 lg:grid-cols-[16rem_1fr]">
+            <dt class="font-dato text-spec uppercase text-verde-monte">{perfil.nombre}</dt>
+            <dd class="max-w-medida text-base text-verde-tinta">{perfil.razon}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <!-- 6. Historia comprimida -->
+  <section class="bg-verde-tinta py-20 lg:py-28">
+    <div class="plano">
+      <TituloSeccion rotulo="Trayectoria" variante="claro">
+        De revender a procesar
+      </TituloSeccion>
+
+      <ol class="mt-12 grid gap-8 border-t-hair border-verde-musgo pt-8 lg:grid-cols-3">
+        <li>
+          <h3 class="font-dato text-spec uppercase text-aserrin">Primero</h3>
+          <p class="mt-3 max-w-medida text-base text-cal">
+            Empezamos revendiendo madera. Comprábamos a otros y entregábamos.
+          </p>
+        </li>
+        <li>
+          <h3 class="font-dato text-spec uppercase text-aserrin">Después</h3>
+          <p class="mt-3 max-w-medida text-base text-cal">
+            Alquilamos locales con maquinaria para poder procesar nosotros mismos.
+          </p>
+        </li>
+        <li>
+          <h3 class="font-dato text-spec uppercase text-aserrin">Desde {ANIO_PLANTA_PROPIA}</h3>
+          <p class="mt-3 max-w-medida text-base text-cal">
+            Planta procesadora propia. Aserramos, dimensionamos, secamos y despachamos con nuestro
+            transporte.
+          </p>
+        </li>
+      </ol>
+
+      <p class="mt-10">
+        <a href="/nosotros" class="boton-linea-claro">
+          Ver la planta
+          <span class="flecha" aria-hidden="true">&rarr;</span>
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <!-- 7. Cómo se compra. Los marcadores numerados sí van: es una secuencia. -->
+  <section class="plano py-20 lg:py-28">
+    <TituloSeccion rotulo="Compra">Cómo se compra</TituloSeccion>
+
+    <ol class="mt-12 grid gap-8 lg:grid-cols-3 lg:gap-12">
+      {
+        PASOS_COMPRA.map((paso) => (
+          <li class="border-t-[3px] border-verde-tinta pt-5">
+            <span class="font-dato text-dato-xl text-ocote-tinta">{paso.numero}</span>
+            <h3 class="mt-3 text-display-2 ancho-normal text-verde-tinta">{paso.titulo}</h3>
+            <p class="mt-3 max-w-medida text-base text-verde-tinta">{paso.texto}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <!-- 8. Cierre a cotización -->
+  <section class="bg-verde-monte py-20 lg:py-24">
+    <div class="plano flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h2 class="revelar-titular max-w-[18ch] text-display-1 ancho-expandido text-cal">
+          Pasanos las medidas y te damos precio
+        </h2>
+        <div class="mt-5">
+          <ResumenCierre client:visible />
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href="/cotizar" class="boton-cotizar">
+          Pedir cotización
+          <span class="flecha" aria-hidden="true">&rarr;</span>
+        </a>
+        <a href="/contacto" class="boton-linea-claro">Ver teléfonos y horario</a>
+      </div>
+    </div>
+  </section>
+</Base>

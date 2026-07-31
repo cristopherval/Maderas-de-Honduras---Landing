@@ -1,0 +1,50 @@
+---
+import {
+  ANIO_PLANTA_PROPIA,
+  ESPECIES_CANTIDAD,
+  MINIMO_ENVIO_PT,
+  PRODUCTOS_CANTIDAD,
+} from '@/data/empresa';
+import { formatearPT } from '@/lib/piesTablares';
+
+/**
+ * La ficha técnica de la empresa, en monoespaciada.
+ *
+ * NO es un banner de estadísticas con contadores animados: es una línea de
+ * especificación, como la etiqueta de un lote. Todos los números son reales.
+ */
+interface Props {
+  /** Retraso de la secuencia de carga del héroe, en milisegundos. */
+  retraso?: number;
+}
+
+const { retraso } = Astro.props;
+
+const DATOS = [
+  { etiqueta: 'Especies', valor: String(ESPECIES_CANTIDAD) },
+  { etiqueta: 'Productos', valor: String(PRODUCTOS_CANTIDAD) },
+  { etiqueta: 'Mínimo por envío', valor: `${formatearPT(MINIMO_ENVIO_PT)} pt` },
+  { etiqueta: 'Planta propia desde', valor: String(ANIO_PLANTA_PROPIA) },
+  { etiqueta: 'Lunes a viernes', valor: '7:00–17:00' },
+  { etiqueta: 'Sábados', valor: '7:00–12:00' },
+];
+---
+
+<section
+  aria-label="Ficha técnica"
+  class:list={['border-y-hair border-verde-musgo bg-verde-tinta', retraso && 'heroe-aparece']}
+  style={retraso ? `--retraso:${retraso}ms` : undefined}
+>
+  <div class="plano">
+    <dl class="grid grid-cols-2 divide-verde-musgo/50 sm:grid-cols-3 lg:grid-cols-6 lg:divide-x">
+      {
+        DATOS.map((dato) => (
+          <div class="border-b-hair border-verde-musgo/50 px-0 py-4 lg:border-b-0 lg:px-5 lg:first:pl-0 lg:last:pr-0">
+            <dt class="font-dato text-spec-sm uppercase text-aserrin">{dato.etiqueta}</dt>
+            <dd class="mt-1 font-dato text-dato-lg text-cal">{dato.valor}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

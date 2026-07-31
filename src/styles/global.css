@@ -1,0 +1,357 @@
+/* ------------------------------------------------------------------ */
+/* Fuentes recortadas — ver scripts/subset-fuentes.mjs                  */
+/* Se sirven desde /fonts con ruta estable para poder precargarlas.     */
+/* ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: 'Archivo Recortada';
+  font-style: normal;
+  font-weight: 600 800;
+  font-stretch: 100% 125%;
+  font-display: swap;
+  src: url('/fonts/archivo-latin.woff2') format('woff2-variations');
+}
+
+@font-face {
+  font-family: 'Instrument Recortada';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('/fonts/instrument-sans-latin.woff2') format('woff2-variations');
+}
+
+@font-face {
+  font-family: 'Plex Recortada';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-400-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Plex Recortada';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-600-latin.woff2') format('woff2');
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Curva única del sitio: salida rápida, frenado largo. Como una sierra
+       que termina el corte. Todo lo que se mueve usa esta y nada más. */
+    --sierra: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* La barra fija inferior no debe tapar el destino de un ancla. */
+    scroll-padding-block: 6rem theme('spacing.barra');
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-cal font-cuerpo text-base text-verde-tinta antialiased;
+    /* Cero rebote horizontal en 360px. */
+    overflow-x: hidden;
+    /* La barra fija solo existe cuando hay partidas en la lista. La isla
+       enciende `con-barra` y con eso el pie deja de quedar tapado y el botón
+       de WhatsApp se acomoda arriba de la barra. */
+    --hueco-barra: 0px;
+    padding-bottom: var(--hueco-barra);
+  }
+
+  body.con-barra {
+    --hueco-barra: theme('spacing.barra');
+  }
+
+  /* Los números no bailan de ancho al contar. */
+  .font-dato,
+  [class*='text-dato'] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.ocote');
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+
+  /* Windows en alto contraste ignora los colores; el foco tiene que quedar. */
+  @media (forced-colors: active) {
+    :focus-visible {
+      outline: 2px solid CanvasText;
+    }
+  }
+
+  ::selection {
+    background-color: theme('colors.ocote');
+    color: theme('colors.verde-tinta');
+  }
+}
+
+@layer components {
+  /* --- Rejilla y contenedores ------------------------------------- */
+
+  .plano {
+    @apply mx-auto w-full max-w-plano px-5 sm:px-8 lg:px-12;
+  }
+
+  /**
+   * Sección con riel de rótulo en el margen izquierdo. En desktop el rótulo
+   * vive en su propia columna; en móvil pasa a línea sobre el titular.
+   */
+  .con-riel {
+    @apply grid grid-cols-1 gap-x-8 lg:grid-cols-[theme('spacing.riel')_1fr];
+  }
+
+  /* --- Botones ----------------------------------------------------- */
+
+  .boton {
+    @apply inline-flex items-center justify-center gap-2 border-hair px-6 py-3
+      font-dato text-dato-sm uppercase tracking-[0.08em]
+      transition-colors duration-micro ease-sierra;
+  }
+
+  /* Ámbar con tinta. Blanco sobre ocote reprueba AA (3.7:1); esto da 4.6:1. */
+  .boton-cotizar {
+    @apply boton border-ocote bg-ocote font-semibold text-verde-tinta
+      hover:border-ocote-tinta hover:bg-ocote-tinta hover:text-cal;
+  }
+
+  .boton-linea {
+    @apply boton border-verde-musgo bg-transparent text-verde-tinta
+      hover:border-verde-monte hover:bg-verde-monte hover:text-cal;
+  }
+
+  .boton-linea-claro {
+    @apply boton border-verde-musgo bg-transparent text-cal
+      hover:border-cal hover:bg-cal hover:text-verde-tinta;
+  }
+
+  /* La flecha del botón se corre 4px. Nada de escalar ni pulsar. */
+  .flecha {
+    @apply inline-block transition-transform duration-micro ease-sierra;
+  }
+
+  .boton:hover .flecha,
+  .boton:focus-visible .flecha {
+    transform: translateX(4px);
+  }
+
+  /* --- Rótulos y reglas -------------------------------------------- */
+
+  .rotulo {
+    @apply font-dato text-spec uppercase text-verde-monte;
+  }
+
+  .rotulo-claro {
+    @apply font-dato text-spec uppercase text-aserrin;
+  }
+
+  /* Marcas de cinta métrica en el riel del margen. Decoración que codifica
+     el negocio: aquí se mide. Solo desde lg, donde hay espacio real. */
+  .cinta-metrica {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      theme('colors.verde-musgo') 0 1px,
+      transparent 1px 12px
+    );
+    opacity: 0.35;
+  }
+
+  /* --- Enlaces de texto -------------------------------------------- */
+
+  .enlace {
+    @apply text-ocote-tinta underline decoration-hair underline-offset-4
+      transition-colors duration-micro ease-sierra hover:text-verde-monte;
+  }
+
+  .enlace-claro {
+    @apply text-ocote underline decoration-hair underline-offset-4
+      transition-colors duration-micro ease-sierra hover:text-cal;
+  }
+}
+
+@layer utilities {
+  /* Tailwind 3 no trae font-stretch y el eje de ancho es el carácter del
+     display: rotulación industrial, letra pintada en el portón de la planta. */
+  .ancho-expandido {
+    font-stretch: 118%;
+  }
+
+  .ancho-normal {
+    font-stretch: 100%;
+  }
+
+  .medida {
+    @apply max-w-medida;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Sistema de animación                                                */
+/*                                                                      */
+/* Son siete y ninguna más. Solo se anima transform, opacity y          */
+/* clip-path: todo va al compositor. Nunca width, height, top ni margin.*/
+/* ------------------------------------------------------------------ */
+
+/* 1. Secuencia de carga del héroe. Las líneas del titular se revelan de
+      abajo hacia arriba con máscara, escalonadas 90ms. El retraso lo pone
+      cada línea con --retraso. Toda la secuencia cierra bajo 1.2s. */
+.heroe-linea {
+  display: block;
+  animation: revelar-linea 650ms var(--sierra) both;
+  animation-delay: var(--retraso, 0ms);
+}
+
+@keyframes revelar-linea {
+  from {
+    clip-path: inset(100% 0 0 0);
+    transform: translateY(0.18em);
+  }
+  to {
+    /* Inset negativo arriba y abajo para no cortar acentos ni descendentes. */
+    clip-path: inset(-25% 0 -25% 0);
+    transform: translateY(0);
+  }
+}
+
+.heroe-aparece {
+  animation: aparecer-suave 500ms var(--sierra) both;
+  animation-delay: var(--retraso, 0ms);
+}
+
+@keyframes aparecer-suave {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 4. Revelado de titulares de sección al hacer scroll. SOLO los titulares.
+      El contenido de abajo aparece ya puesto, sin animar. */
+.revelar-titular {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 500ms var(--sierra),
+    transform 500ms var(--sierra);
+}
+
+.revelar-titular.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Sin JavaScript el titular tiene que verse igual. */
+.no-js .revelar-titular {
+  opacity: 1;
+  transform: none;
+}
+
+/* 5. Hover en tarjetas de especie: la imagen escala dentro de su marco y el
+      eyebrow pasa a ocote. Sin levantar sombras, sin translateY. */
+.marco-especie {
+  overflow: hidden;
+}
+
+.marco-especie img,
+.marco-especie .marcador-foto {
+  transition: transform 400ms var(--sierra);
+}
+
+.tarjeta-especie:hover .marco-especie img,
+.tarjeta-especie:hover .marco-especie .marcador-foto,
+.tarjeta-especie:focus-within .marco-especie img,
+.tarjeta-especie:focus-within .marco-especie .marcador-foto {
+  transform: scale(1.03);
+}
+
+.tarjeta-especie .eyebrow-especie {
+  transition: color 400ms var(--sierra);
+}
+
+.tarjeta-especie:hover .eyebrow-especie,
+.tarjeta-especie:focus-within .eyebrow-especie {
+  color: theme('colors.ocote');
+}
+
+/* 7. La línea del proceso. Único efecto scroll-driven del sitio: la troza
+      avanzando por la línea de producción. Fallback estático donde no haya
+      soporte, que es el estado por defecto de la regla. */
+.linea-proceso {
+  transform-origin: top center;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .linea-proceso {
+      animation: dibujar-linea linear both;
+      animation-timeline: view();
+      animation-range: entry 15% cover 55%;
+    }
+  }
+}
+
+@keyframes dibujar-linea {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* prefers-reduced-motion apaga las siete.                              */
+/* Todo aparece en su estado final: el contador muestra el número, la    */
+/* línea del proceso se dibuja completa, nada se desplaza.               */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .revelar-titular {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .heroe-linea {
+    clip-path: none !important;
+    transform: none !important;
+  }
+
+  .linea-proceso {
+    transform: scaleY(1) !important;
+  }
+}

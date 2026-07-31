@@ -1,0 +1,128 @@
+---
+import Logo from '@/components/Logo.astro';
+import {
+  DIRECCION,
+  EMAIL_CONTACTO,
+  HORARIO,
+  MINIMO_ENVIO_PT,
+  REDES,
+  TELEFONOS,
+  urlComoLlegar,
+  urlTelefono,
+} from '@/data/empresa';
+import { formatearPT } from '@/lib/piesTablares';
+
+const ENLACES = [
+  { href: '/especies', texto: 'Especies' },
+  { href: '/productos', texto: 'Productos' },
+  { href: '/proceso', texto: 'Proceso' },
+  { href: '/nosotros', texto: 'Nosotros' },
+  { href: '/contacto', texto: 'Contacto' },
+  { href: '/cotizar', texto: 'Pedir cotización' },
+];
+---
+
+<footer class="border-t-hair border-verde-musgo/40 bg-verde-tinta text-cal">
+  <div class="plano grid gap-12 py-16 lg:grid-cols-[1.2fr_1fr_1fr] lg:gap-8 lg:py-20">
+    <div>
+      <Logo variante="claro" tamano={44} />
+      <p class="mt-6 max-w-medida text-sm text-aserrin">
+        Aserradero y planta procesadora. Despachamos por camionada desde {
+          formatearPT(MINIMO_ENVIO_PT)
+        } pies tablares con transporte propio.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="rotulo-claro">Planta</h2>
+      <address class="mt-4 not-italic">
+        <p class="max-w-medida text-sm text-cal">{DIRECCION.linea}</p>
+        <ul class="mt-4 space-y-1">
+          {
+            TELEFONOS.map((telefono) => (
+              <li>
+                <a href={urlTelefono(telefono)} class="font-dato text-dato text-cal hover:text-ocote">
+                  {telefono}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        {
+          /* EMAIL_CONTACTO es null hasta que el cliente tenga correo. Mientras
+             tanto no se pinta nada: un correo de relleno es peor que ninguno. */
+          EMAIL_CONTACTO !== null && (
+            <p class="mt-2">
+              <a href={`mailto:${EMAIL_CONTACTO}`} class="enlace-claro text-sm">
+                {EMAIL_CONTACTO}
+              </a>
+            </p>
+          )
+        }
+      </address>
+      <a href={urlComoLlegar()} target="_blank" rel="noopener noreferrer" class="boton-linea-claro mt-6">
+        Cómo llegar
+        <span class="flecha" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+
+    <div>
+      <h2 class="rotulo-claro">Horario</h2>
+      <ul class="mt-4 space-y-1">
+        {
+          HORARIO.map((franja) => (
+            <li class="flex flex-wrap justify-between gap-x-4 border-b-hair border-verde-musgo/40 py-1.5 text-sm">
+              <span class="text-aserrin">{franja.dias}</span>
+              <span class="font-dato text-dato-sm text-cal">
+                {franja.abre === null ? 'Cerrado' : `${franja.abre} – ${franja.cierra}`}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <h2 class="rotulo-claro mt-10">Secciones</h2>
+      <ul class="mt-4 grid grid-cols-2 gap-x-6 gap-y-1">
+        {
+          ENLACES.map((enlace) => (
+            <li>
+              <a href={enlace.href} class="text-sm text-aserrin hover:text-ocote">
+                {enlace.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        /* REDES está vacío. Un pie con iconos sin enlace grita sitio abandonado,
+           así que el bloque entero no se renderiza hasta que existan cuentas. */
+        REDES.length > 0 && (
+          <>
+            <h2 class="rotulo-claro mt-10">Redes</h2>
+            <ul class="mt-4 flex gap-4">
+              {REDES.map((red) => (
+                <li>
+                  <a href={red.url} class="enlace-claro text-sm" rel="noopener noreferrer">
+                    {red.nombre}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="border-t-hair border-verde-musgo/40">
+    <div class="plano flex flex-wrap items-center justify-between gap-2 py-5">
+      <p class="font-dato text-spec-sm uppercase text-aserrin">
+        Maderas de Honduras &middot; {DIRECCION.departamento}, {DIRECCION.pais}
+      </p>
+      <p class="font-dato text-spec-sm uppercase text-aserrin">
+        Los precios se cotizan por volumen, especie y acabado
+      </p>
+    </div>
+  </div>
+</footer>

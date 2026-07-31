@@ -1,0 +1,114 @@
+---
+import Logo from '@/components/Logo.astro';
+
+const ENLACES = [
+  { href: '/especies', texto: 'Especies' },
+  { href: '/productos', texto: 'Productos' },
+  { href: '/proceso', texto: 'Proceso' },
+  { href: '/nosotros', texto: 'Nosotros' },
+  { href: '/contacto', texto: 'Contacto' },
+];
+
+const ruta = Astro.url.pathname.replace(/\/$/, '') || '/';
+const estaActivo = (href: string): boolean => ruta === href || ruta.startsWith(`${href}/`);
+---
+
+<header class="sticky top-0 z-40 border-b-hair border-verde-musgo/40 bg-cal">
+  <div class="plano flex h-16 items-center justify-between gap-3 lg:h-20">
+    <a href="/" class="shrink-0" aria-label="Maderas de Honduras, ir al inicio">
+      <Logo tamano={38} />
+    </a>
+
+    <!-- Navegación de escritorio -->
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="flex items-center gap-8">
+        {
+          ENLACES.map((enlace) => (
+            <li>
+              <a
+                href={enlace.href}
+                aria-current={estaActivo(enlace.href) ? 'page' : undefined}
+                class:list={[
+                  'font-dato text-dato-sm uppercase tracking-[0.08em] transition-colors duration-micro ease-sierra hover:text-ocote-tinta',
+                  estaActivo(enlace.href)
+                    ? 'text-ocote-tinta underline decoration-hair underline-offset-8'
+                    : 'text-verde-tinta',
+                ]}
+              >
+                {enlace.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <!-- Persistente en todo tamaño de pantalla, nunca dentro del menú. -->
+      <a href="/cotizar" class="boton-cotizar px-4 py-2.5 lg:px-6 lg:py-3">
+        <span class="lg:hidden">Cotizar</span>
+        <span class="hidden lg:inline">Pedir cotización</span>
+      </a>
+
+      <!-- Menú de móvil sin JavaScript: <details> ya es accesible por teclado. -->
+      <details class="menu-movil relative lg:hidden">
+        <summary
+          class="flex h-11 w-11 cursor-pointer list-none items-center justify-center border-hair border-verde-musgo text-verde-tinta transition-colors duration-micro ease-sierra hover:bg-aserrin"
+          aria-label="Abrir el menú de secciones"
+        >
+          <span class="sr-only">Secciones</span>
+          <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true" focusable="false">
+            <path d="M0 1h18M0 7h18M0 13h18" stroke="currentColor" stroke-width="1.5"></path>
+          </svg>
+        </summary>
+        <nav
+          aria-label="Secciones"
+          class="absolute right-0 top-[calc(100%+0.75rem)] w-56 border-hair border-verde-musgo bg-cal"
+        >
+          <ul>
+            {
+              ENLACES.map((enlace) => (
+                <li class="border-b-hair border-verde-musgo/40 last:border-b-0">
+                  <a
+                    href={enlace.href}
+                    aria-current={estaActivo(enlace.href) ? 'page' : undefined}
+                    class:list={[
+                      'block px-5 py-4 font-dato text-dato-sm uppercase tracking-[0.08em]',
+                      estaActivo(enlace.href) ? 'text-ocote-tinta' : 'text-verde-tinta',
+                    ]}
+                  >
+                    {enlace.texto}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* Safari sigue pintando el triángulo por su cuenta. */
+  .menu-movil > summary::-webkit-details-marker {
+    display: none;
+  }
+</style>
+
+<script>
+  // Cerrar el menú al tocar fuera o al presionar Escape. Es la única pieza de
+  // comportamiento que <details> no trae de fábrica.
+  const menu = document.querySelector<HTMLDetailsElement>('.menu-movil');
+  if (menu) {
+    document.addEventListener('click', (evento) => {
+      if (menu.open && !menu.contains(evento.target as Node)) menu.open = false;
+    });
+    document.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+  }
+</script>

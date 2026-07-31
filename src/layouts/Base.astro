@@ -1,0 +1,159 @@
+---
+import '@/styles/global.css';
+import Encabezado from '@/components/Encabezado.astro';
+import PieDePagina from '@/components/PieDePagina.astro';
+import BotonWhatsApp from '@/components/BotonWhatsApp.astro';
+import BarraTotal from '@/components/isla/BarraTotal';
+import { mensajeDeContexto } from '@/lib/whatsapp';
+import {
+  DIRECCION,
+  EMAIL_CONTACTO,
+  HORARIO,
+  MAPA_LAT,
+  MAPA_LNG,
+  NOMBRE,
+  RUBRO,
+  TELEFONOS,
+} from '@/data/empresa';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  contexto: Parameters<typeof mensajeDeContexto>[0];
+  /** `/cotizar` y `/gracias` ya muestran la lista completa; ahí sobra la barra. */
+  sinBarra?: boolean;
+}
+
+const { titulo, descripcion, contexto, sinBarra = false } = Astro.props;
+
+const sitio = Astro.site ?? new URL('https://maderasdehonduras.hn');
+const canonica = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', sitio);
+const imagenOg = new URL('/og.png', sitio);
+const tituloCompleto = titulo === NOMBRE ? titulo : `${titulo} · ${NOMBRE}`;
+
+// JSON-LD. Sin `geo` mientras no haya coordenadas confirmadas, y sin `email`
+// mientras el cliente no tenga correo. No se declara lo que no existe.
+const negocio: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${sitio.origin}/#negocio`,
+  name: NOMBRE,
+  description: RUBRO,
+  url: sitio.origin,
+  image: imagenOg.href,
+  telephone: TELEFONOS.map((t) => `+504${t.replace(/\D/g, '')}`),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: DIRECCION.linea,
+    addressRegion: DIRECCION.departamento,
+    addressCountry: 'HN',
+  },
+  // Domingo se omite: la ausencia de franja ya significa cerrado.
+  openingHoursSpecification: HORARIO.filter((f) => f.isoAbre !== null).map((franja) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: franja.iso,
+    opens: franja.isoAbre,
+    closes: franja.isoCierra,
+  })),
+};
+
+if (EMAIL_CONTACTO !== null) negocio['email'] = EMAIL_CONTACTO;
+if (MAPA_LAT !== null && MAPA_LNG !== null) {
+  negocio['geo'] = { '@type': 'GeoCoordinates', latitude: MAPA_LAT, longitude: MAPA_LNG };
+}
+---
+
+<!doctype html>
+<html lang="es-HN" class="no-js">
+  <head>
+    <script is:inline>
+      // Antes de pintar nada: si hay JavaScript, los titulares arrancan ocultos
+      // para poder revelarse. Sin JavaScript la clase se queda y se ven siempre.
+      document.documentElement.classList.remove('no-js');
+    </script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica.href} />
+
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0E2A1D" />
+
+    <!-- Las dos fuentes del primer pintado. La monoespaciada carga con swap. -->
+    <link
+      rel="preload"
+      href="/fonts/archivo-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/instrument-sans-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={NOMBRE} />
+    <meta property="og:locale" content="es_HN" />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica.href} />
+    <meta property="og:image" content={imagenOg.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${NOMBRE} — ${RUBRO}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(negocio)} />
+  </head>
+
+  <body>
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:border-hair focus:border-verde-tinta focus:bg-cal focus:px-4 focus:py-3 focus:font-dato focus:text-dato-sm"
+    >
+      Saltar al contenido
+    </a>
+
+    <Encabezado />
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <PieDePagina />
+
+    <BotonWhatsApp mensaje={mensajeDeContexto(contexto)} />
+    {!sinBarra && <BarraTotal client:idle />}
+
+    <script>
+      /**
+       * El único observador del sitio. Revela los titulares de sección y nada
+       * más: el contenido de abajo aparece ya puesto.
+       */
+      const titulares = document.querySelectorAll<HTMLElement>('.revelar-titular');
+      const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (sinMovimiento || !('IntersectionObserver' in window)) {
+        titulares.forEach((titular) => titular.classList.add('visible'));
+      } else {
+        const observador = new IntersectionObserver(
+          (entradas) => {
+            for (const entrada of entradas) {
+              if (!entrada.isIntersecting) continue;
+              entrada.target.classList.add('visible');
+              observador.unobserve(entrada.target);
+            }
+          },
+          { threshold: 0.4 },
+        );
+        titulares.forEach((titular) => observador.observe(titular));
+      }
+    </script>
+  </body>
+</html>
