@@ -422,8 +422,7 @@
 /*                                                                      */
 /* En una columna las fotos ocupaban el ancho entero y había que        */
 /* desplazar muchísimo para recorrer un listado. A dos columnas se ven   */
-/* más chicas, entra el doble por pantalla y el bloque ancho cada cuatro */
-/* le da ritmo en vez de dejar una cuadrícula plana.                     */
+/* más chicas y entra el doble por pantalla.                             */
 /*                                                                      */
 /* Va con `max-width` y no con un `sm:` de Tailwind porque tiene que     */
 /* pisar las utilidades de proporción del marcador de foto.              */
@@ -440,17 +439,9 @@
     aspect-ratio: 1 / 1;
   }
 
-  /* Uno de cada TRES cruza las dos columnas y va apaisado. Con ciclo de cuatro
-     el cuarto quedaba solo en su fila y el quinto saltaba a la siguiente,
-     dejando un hueco; con tres la cuadrícula encaja sin sobrantes. */
-  .collage > li:nth-child(3n + 1) {
-    grid-column: span 2;
-  }
-
-  .collage > li:nth-child(3n + 1) .marco-especie img,
-  .collage > li:nth-child(3n + 1) .marco-especie .marcador-foto {
-    aspect-ratio: 16 / 9;
-  }
+  /* Todas del mismo tamaño: el cuadro chico. Se probó con uno de cada tres
+     cruzando las dos columnas en apaisado, pero el cuadro parejo se lee
+     mejor y entra más producto por pantalla. */
 
   /* El título de tarjeta baja de cuerpo: en media columna, 22px parte
      los nombres largos en tres líneas. */
