@@ -289,8 +289,13 @@ Cuatro cosas que conviene saber:
   y en `public/robots.txt`.
 - **Correo, redes y coordenadas**: siguen en `null` / vacío y la UI los oculta.
 - **Teléfono con WhatsApp**: se asumió 8843-9226.
-- **Línea de tiempo**: "13 años en el rubro" no cuadra con "planta propia desde
-  2013". Solo se publica el segundo dato.
+- **Línea de tiempo**: RESUELTO. El cliente pidió publicar las dos cifras: 13
+  años en el rubro forestal y planta propia desde 2013. La aritmética no cierra
+  del todo —13 años atrás desde 2026 es justo 2013, y ahí arranca la planta, no
+  el rubro— pero es su dato y así se publica. `ANIOS_EN_EL_RUBRO` está escrito a
+  mano en `data/empresa.ts`: hay que revisarlo cada año, o pedirle el año exacto
+  en que empezó a revender madera para poder calcularlo solo.
+  La redacción es literalmente la suya, en `/` y en `/nosotros`.
 - **Matriz especie × producto** y **unidad de venta** de capote, leña, ocote y
   aserrín: armadas con el criterio estándar del rubro, sin confirmar.
 - **Lista de tomas fotográficas**: son los campos `toma` de

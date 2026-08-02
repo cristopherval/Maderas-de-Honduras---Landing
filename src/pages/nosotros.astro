@@ -2,14 +2,17 @@
 import Base from '@/layouts/Base.astro';
 import AyudaWhatsApp from '@/components/AyudaWhatsApp.astro';
 import MarcadorFoto from '@/components/MarcadorFoto.astro';
-import { ANIO_PLANTA_PROPIA, DIRECCION } from '@/data/empresa';
+import { ANIO_PLANTA_PROPIA, ANIOS_EN_EL_RUBRO, DIRECCION } from '@/data/empresa';
 
 /**
  * Corta y sin épica. Se fue la banda de estadísticas (especies, productos,
  * mínimo por envío, año) y se fue el bloque de "a quién le vendemos": listar
  * constructoras, arquitectos y madereras es otra forma de decirle al que
  * compra poco que no es su lugar.
+ *
+ * La historia es la que redactó el cliente, palabra por palabra.
  */
+
 /**
  * Las dos tomas de la planta. Igual que en la portada, son de relleno con
  * licencia libre —ver CREDITOS-RELLENO.json— y hay que cambiarlas por fotos
@@ -33,18 +36,18 @@ const FOTOS_PLANTA = [
 
 <Base
   titulo="Nosotros"
-  descripcion={`Aserradero y planta procesadora propia desde ${ANIO_PLANTA_PROPIA}. ${DIRECCION.corta}. Se puede venir a ver.`}
+  descripcion={`Aserradero y planta procesadora propia desde ${ANIO_PLANTA_PROPIA}. ${DIRECCION.corta}. Puede visitarnos.`}
   contexto={{ tipo: 'nosotros' }}
 >
   <section class="bg-cal">
     <div class="plano pb-10 pt-14 lg:pt-20">
     <h1 class="revelar max-w-[18ch] text-display-hero text-verde-tinta">
-      Planta propia desde {ANIO_PLANTA_PROPIA}
+      {ANIOS_EN_EL_RUBRO} años en el rubro forestal
     </h1>
+    {/* Redacción del cliente, tal cual la pasó. */}
     <p class="revelar mt-6 max-w-medida text-lead text-verde-tinta" style="--retraso: 90ms">
-      Empezamos revendiendo madera de otros aserraderos. Después alquilamos locales con maquinaria
-      para procesarla nosotros. Desde {ANIO_PLANTA_PROPIA} tenemos planta propia: aserramos,
-      dimensionamos, secamos, cepillamos y curamos en el mismo lugar.
+      Se inició revendiendo madera, después alquilando locales con maquinaria, para después tener
+      una planta procesadora propia desde el año {ANIO_PLANTA_PROPIA} hasta la fecha.
     </p>
     </div>
   </section>
@@ -53,7 +56,7 @@ const FOTOS_PLANTA = [
     <div class="plano py-10 lg:py-14">
       <h2 class="revelar rotulo">La planta</h2>
       <p class="mt-4 max-w-medida text-base text-verde-tinta">
-        {DIRECCION.linea}. Se puede venir a ver en horario de trabajo.
+        {DIRECCION.linea}. Puede visitarnos en horario de trabajo.
       </p>
       <div class="mt-8 grid gap-6 sm:grid-cols-2">
         {
@@ -68,8 +71,8 @@ const FOTOS_PLANTA = [
   <section class="bg-verde-tinta text-cal">
     <div class="plano py-12 lg:py-16">
       <AyudaWhatsApp
-        titulo="Vení a la planta, o escribinos y te ayudamos."
-        mensaje="Buenas. Quiero consultar por un pedido de madera."
+        titulo="Visítenos en la planta, o escríbanos y le ayudamos."
+        mensaje="Buen día. Quisiera consultar por un pedido de madera."
       />
     </div>
   </section>

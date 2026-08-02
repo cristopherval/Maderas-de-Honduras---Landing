@@ -20,7 +20,7 @@ interface Props {
 
 const {
   mensaje,
-  titulo = '¿No encontrás lo que buscás? Nosotros te ayudamos.',
+  titulo = '¿No encuentra lo que busca? Nosotros le ayudamos.',
   variante = 'claro',
   conTelefono = true,
 } = Astro.props;
@@ -35,7 +35,7 @@ const claseBotonDos = claro ? 'boton-linea-claro' : 'boton-linea';
   <div>
     <p class:list={['revelar max-w-medida text-display-2', colorTitulo]}>{titulo}</p>
     <p class:list={['mt-2 text-sm', colorApoyo]}>
-      Escribinos por WhatsApp y te respondemos en horario de planta.
+      Escríbanos por WhatsApp y le respondemos en horario de planta.
     </p>
   </div>
 

@@ -14,15 +14,15 @@ export function mensajeDeContexto(contexto: {
 }): string {
   switch (contexto.tipo) {
     case 'producto':
-      return 'Buenas. Estoy viendo el catálogo y quiero preguntar precio.';
+      return 'Buen día. Estoy viendo el catálogo y quisiera consultar precio.';
     case 'proceso':
-      return 'Buenas. Quiero consultar por un pedido con corte a la medida.';
+      return 'Buen día. Quisiera consultar por un corte a pedido.';
     case 'nosotros':
-      return 'Buenas. Quiero consultar por un pedido de madera.';
+      return 'Buen día. Quisiera consultar por un pedido de madera.';
     case 'contacto':
-      return 'Buenas. Quiero consultar horario y disponibilidad para pasar a la planta.';
+      return 'Buen día. Quisiera consultar horario y disponibilidad para visitar la planta.';
     case 'inicio':
     default:
-      return 'Buenas. Quiero preguntar precio de madera. Les paso las medidas.';
+      return 'Buen día. Quisiera consultar precio de madera.';
   }
 }

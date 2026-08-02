@@ -21,9 +21,12 @@ const ENLACES = [
 ---
 
 <footer class="bg-verde-tinta text-cal">
-  {/* Última puerta abierta antes de que se vayan. */}
-  <div class="plano border-b border-verde-musgo/30 py-12 lg:py-14">
-    <AyudaWhatsApp mensaje="Buenas. Estoy en el sitio y no encuentro lo que busco. ¿Me ayudan?" />
+  {/* Última puerta abierta antes de que se vayan. Se separa del resto del pie
+      por color —verde monte sobre verde tinta—, no por filete. */}
+  <div class="bg-verde-monte">
+    <div class="plano py-12 lg:py-14">
+      <AyudaWhatsApp mensaje="Buen día. No encuentro lo que busco en el sitio. ¿Me pueden ayudar?" />
+    </div>
   </div>
 
   <div class="plano grid gap-12 py-16 lg:grid-cols-[1.2fr_1fr_1fr] lg:gap-8 lg:py-20">

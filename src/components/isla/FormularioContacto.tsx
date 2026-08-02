@@ -17,18 +17,18 @@ function validar(valores: Record<Campo, string>): Partial<Record<Campo, string>>
   const errores: Partial<Record<Campo, string>> = {};
 
   if (valores.nombre.trim() === '') {
-    errores.nombre = 'Poné tu nombre para saber con quién hablamos.';
+    errores.nombre = 'Indique su nombre para saber con quién tratamos.';
   }
 
   const digitos = valores.telefono.replace(/\D/g, '').replace(/^504/, '');
   if (valores.telefono.trim() === '') {
-    errores.telefono = 'Necesitamos un teléfono para llamarte con el precio.';
+    errores.telefono = 'Necesitamos un teléfono para comunicarle el precio.';
   } else if (digitos.length !== 8) {
-    errores.telefono = 'El teléfono lleva 8 dígitos, por ejemplo 8843-9226.';
+    errores.telefono = 'El teléfono debe tener 8 dígitos. Por ejemplo: 8843-9226.';
   }
 
   if (valores.necesita.trim() === '') {
-    errores.necesita = 'Contanos qué ocupás, aunque sea en una línea.';
+    errores.necesita = 'Indique qué necesita, aunque sea en una línea.';
   }
 
   return errores;
@@ -57,9 +57,9 @@ export default function FormularioContacto() {
     }
 
     const mensaje = [
-      `Buenas, soy ${valores.nombre.trim()}.`,
+      `Buen día, soy ${valores.nombre.trim()}.`,
       valores.necesita.trim(),
-      `Mi teléfono es ${valores.telefono.trim()}.`,
+      `Mi número de teléfono es ${valores.telefono.trim()}.`,
     ].join(' ');
 
     window.location.href = urlWhatsApp(mensaje);
@@ -116,10 +116,10 @@ export default function FormularioContacto() {
         </label>
 
         <label>
-          <Etiqueta texto="Qué necesitás" />
+          <Etiqueta texto="Qué necesita" />
           <textarea
             rows={4}
-            placeholder="Contanos qué ocupás: especie, cantidad, acabado y para qué es. Si traés plano, mejor."
+            placeholder="Indique especie, cantidad, acabado y destino de la madera. Si cuenta con plano, mejor."
             {...props('necesita')}
             onInput={(evento) => cambiar('necesita', evento.currentTarget.value)}
           />
@@ -134,7 +134,7 @@ export default function FormularioContacto() {
         </span>
       </button>
       <p className="mt-3 text-sm text-verde-monte">
-        Se abre WhatsApp con el mensaje ya escrito. Solo tenés que darle enviar.
+        Se abrirá WhatsApp con el mensaje ya redactado. Solo debe enviarlo.
       </p>
     </form>
   );

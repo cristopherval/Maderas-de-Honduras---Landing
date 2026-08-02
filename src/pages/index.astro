@@ -6,6 +6,7 @@ import heroe from '@/assets/fotos/heroe.jpg';
 import { ETIQUETA_ACABADO, obtenerEspecies, obtenerProductos, obtenerServicios } from '@/lib/contenido';
 import {
   ANIO_PLANTA_PROPIA,
+  ANIOS_EN_EL_RUBRO,
   DIRECCION,
   HORARIO,
   NOTA_VOLUMEN,
@@ -104,8 +105,8 @@ const fotoPlanta = {
       <h1 class="heroe-entra text-display-hero text-cal">Maderas de Honduras</h1>
 
       <p class="heroe-entra mt-6 max-w-medida text-lead text-aserrin" style="--retraso: 110ms">
-        Aserradero y planta procesadora. Cortamos pino, roble, caoba y cedro para tu
-        obra, y los secamos, cepillamos y curamos en la misma planta. {NOTA_VOLUMEN}.
+        Aserradero y planta procesadora. Elaboramos pino, roble, caoba y cedro: corte, secado,
+        cepillado y curado en nuestras propias instalaciones. {NOTA_VOLUMEN}.
       </p>
 
       <div class="heroe-entra mt-9 flex flex-wrap gap-3" style="--retraso: 220ms">
@@ -152,11 +153,12 @@ const fotoPlanta = {
       <div>
         <h2 class="revelar rotulo">Nosotros</h2>
         <p class="mt-6 max-w-medida text-lead text-verde-tinta">
-          Planta propia desde {ANIO_PLANTA_PROPIA}. Aserramos, dimensionamos, secamos, cepillamos y
-          curamos en el mismo lugar, y por eso la pieza sale como la pediste y no como había.
+          {ANIOS_EN_EL_RUBRO} años dentro del rubro forestal. Se inició revendiendo madera, después
+          alquilando locales con maquinaria, para después tener una planta procesadora propia desde
+          el año {ANIO_PLANTA_PROPIA} hasta la fecha.
         </p>
         <a href="/nosotros" class="boton-linea mt-8">
-          Conocenos
+          Conocer más
           <span class="flecha" aria-hidden="true">&rarr;</span>
         </a>
       </div>

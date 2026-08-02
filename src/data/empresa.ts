@@ -92,12 +92,20 @@ export const HORARIO = [
  */
 export const NOTA_VOLUMEN = 'Trabajamos por volumen';
 
-/**
- * TODO: confirmar línea de tiempo con el cliente. Dice "13 años en el rubro" y
- * también "planta propia desde 2013", que no cuadran entre sí. Se publica solo
- * el dato duro y verificable; no se afirma un año de fundación.
- */
 export const ANIO_PLANTA_PROPIA = 2013;
+
+/**
+ * Años en el rubro forestal, según el cliente.
+ *
+ * Es un número escrito a mano, no calculado: si fuera 2026 menos el año de
+ * inicio daría 13 partiendo de 2013, y ese es justo el año en que arranca la
+ * planta propia, no el rubro. El cliente confirmó las dos cifras tal cual, así
+ * que se publican como las dio.
+ *
+ * TODO: revisarlo cada año, o pedirle el año exacto en que empezó a revender
+ * madera para poder calcularlo solo.
+ */
+export const ANIOS_EN_EL_RUBRO = 13;
 
 
 /** Enlace a Google Maps por texto mientras no haya coordenadas confirmadas. */
