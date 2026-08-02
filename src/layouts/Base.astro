@@ -25,6 +25,16 @@ interface Props {
 
 const { titulo, descripcion, contexto, noIndexar = false } = Astro.props;
 
+/**
+ * Construcción de vista previa: se marca TODO el sitio como `noindex`.
+ *
+ * Sin esto, un enlace de prueba en netlify.app o pages.dev se indexa y después
+ * compite en Google con el dominio de verdad. Se activa con
+ * `VISTA_PREVIA=1` al construir; ver el comentario de astro.config.mjs.
+ */
+const VISTA_PREVIA = process.env.VISTA_PREVIA === '1';
+const sinIndexar = noIndexar || VISTA_PREVIA;
+
 const sitio = Astro.site ?? new URL('https://maderasdehonduras.hn');
 const canonica = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', sitio);
 const imagenOg = new URL('/og.png', sitio);
@@ -76,7 +86,7 @@ if (MAPA_LAT !== null && MAPA_LNG !== null) {
     <title>{tituloCompleto}</title>
     <meta name="description" content={descripcion} />
     <link rel="canonical" href={canonica.href} />
-    {noIndexar && <meta name="robots" content="noindex, follow" />}
+    {sinIndexar && <meta name="robots" content="noindex, follow" />}
 
     <link rel="icon" href="/logo.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#0E2A1D" />

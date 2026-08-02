@@ -3,9 +3,21 @@ import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
 import sitemap from '@astrojs/sitemap';
 
-// TODO: confirmar el dominio definitivo con el cliente antes de publicar.
-// De aquí salen las URL canónicas, el sitemap y las etiquetas Open Graph.
-const SITIO = 'https://maderasdehonduras.hn';
+/**
+ * De aquí salen las URL canónicas, el sitemap y las etiquetas Open Graph.
+ *
+ * TODO: confirmar el dominio definitivo con el cliente antes de publicar.
+ *
+ * Para una vista previa —enseñarle el sitio al cliente antes de tener el
+ * dominio— se construye así:
+ *
+ *   VISTA_PREVIA=1 SITIO_PREVIA=https://loquesea.netlify.app corepack pnpm build
+ *
+ * Eso hace dos cosas: apunta las canónicas al enlace de prueba en vez de a un
+ * dominio que no existe, y marca todas las páginas como `noindex` para que
+ * Google no se quede con la versión provisional.
+ */
+const SITIO = process.env.SITIO_PREVIA || 'https://maderasdehonduras.hn';
 
 export default defineConfig({
   site: SITIO,

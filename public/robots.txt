@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-# TODO: actualizar el dominio junto con `site` en astro.config.mjs.
-Sitemap: https://maderasdehonduras.hn/sitemap-index.xml
