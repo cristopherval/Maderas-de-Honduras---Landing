@@ -4,36 +4,11 @@
 /* ------------------------------------------------------------------ */
 
 @font-face {
-  font-family: 'Archivo Recortada';
+  font-family: 'Franklin Recortada';
   font-style: normal;
-  font-weight: 600 800;
-  font-stretch: 100% 125%;
+  font-weight: 400 700;
   font-display: swap;
-  src: url('/fonts/archivo-latin.woff2') format('woff2-variations');
-}
-
-@font-face {
-  font-family: 'Instrument Recortada';
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url('/fonts/instrument-sans-latin.woff2') format('woff2-variations');
-}
-
-@font-face {
-  font-family: 'Plex Recortada';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/ibm-plex-mono-400-latin.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Plex Recortada';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/ibm-plex-mono-600-latin.woff2') format('woff2');
+  src: url('/fonts/libre-franklin-latin.woff2') format('woff2-variations');
 }
 
 @tailwind base;
@@ -45,6 +20,8 @@
     /* Curva única del sitio: salida rápida, frenado largo. Como una sierra
        que termina el corte. Todo lo que se mueve usa esta y nada más. */
     --sierra: cubic-bezier(0.16, 1, 0.3, 1);
+    /* Para lo que entra en pantalla: arranca y frena parejo, sin tirón. */
+    --suave: cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   html {
@@ -86,16 +63,32 @@
     text-wrap: pretty;
   }
 
+  /* Aro de dos tonos: anillo claro pegado al elemento, anillo oscuro por fuera.
+     Sobre fondo claro se ve el oscuro (14.3); sobre las bandas verdes se ve el
+     claro (14.3 sobre tinta, 9.3 sobre monte). Siempre hay uno de los dos que
+     contrasta, que es lo que pide la 1.4.11 para un indicador de foco.
+
+     Por qué no un solo color: el aro se dibuja FUERA del elemento, así que lo
+     que importa es el fondo del padre, no el del elemento. `ocote` fijo daba
+     2.96 sobre verde-monte y 2.54 sobre aserrin, y `currentColor` desaparecía
+     en todo botón cuyo texto es del color de la banda que lo rodea.
+
+     El box-shadow acá no es una sombra: no tiene desenfoque ni desplazamiento,
+     es un anillo sólido de 2px que rellena justo el hueco de outline-offset.
+     Es la única excepción a la regla de cero sombras del proyecto. */
   :focus-visible {
-    outline: 2px solid theme('colors.ocote');
+    outline: 2px solid theme('colors.verde-tinta');
     outline-offset: 2px;
+    box-shadow: 0 0 0 2px theme('colors.cal');
     border-radius: 1px;
   }
 
-  /* Windows en alto contraste ignora los colores; el foco tiene que quedar. */
+  /* Windows en alto contraste ignora los colores; el foco tiene que quedar.
+     Ahí sobra el anillo doble: el sistema fuerza sus propios colores. */
   @media (forced-colors: active) {
     :focus-visible {
       outline: 2px solid CanvasText;
+      box-shadow: none;
     }
   }
 
@@ -128,7 +121,7 @@
       transition-colors duration-micro ease-sierra;
   }
 
-  /* Ámbar con tinta. Blanco sobre ocote reprueba AA (3.7:1); esto da 4.6:1. */
+  /* Ámbar con tinta: 4.6:1. Blanco sobre ocote reprueba AA (3.0:1). */
   .boton-cotizar {
     @apply boton border-ocote bg-ocote font-semibold text-verde-tinta
       hover:border-ocote-tinta hover:bg-ocote-tinta hover:text-cal;
@@ -142,16 +135,6 @@
   .boton-linea-claro {
     @apply boton border-verde-musgo bg-transparent text-cal
       hover:border-cal hover:bg-cal hover:text-verde-tinta;
-  }
-
-  /* La flecha del botón se corre 4px. Nada de escalar ni pulsar. */
-  .flecha {
-    @apply inline-block transition-transform duration-micro ease-sierra;
-  }
-
-  .boton:hover .flecha,
-  .boton:focus-visible .flecha {
-    transform: translateX(4px);
   }
 
   /* --- Rótulos y reglas -------------------------------------------- */
@@ -189,65 +172,76 @@
 }
 
 @layer utilities {
-  /* Tailwind 3 no trae font-stretch y el eje de ancho es el carácter del
-     display: rotulación industrial, letra pintada en el portón de la planta. */
-  .ancho-expandido {
-    font-stretch: 118%;
-  }
-
-  .ancho-normal {
-    font-stretch: 100%;
-  }
-
+  /* `ancho-expandido` y `ancho-normal` se fueron con Archivo: eran font-stretch
+     sobre su eje de ancho, y Libre Franklin no tiene ese eje. Dejarlas habría
+     hecho que el navegador estirara la letra sintéticamente, que se ve mal. */
   .medida {
     @apply max-w-medida;
   }
 }
 
 /* ------------------------------------------------------------------ */
-/* Sistema de animación                                                */
+/* Sistema de animación                                                 */
 /*                                                                      */
-/* Son siete y ninguna más. Solo se anima transform, opacity y          */
-/* clip-path: todo va al compositor. Nunca width, height, top ni margin.*/
+/* Solo se anima transform, opacity y clip-path: todo va al compositor.  */
+/* Nunca width, height, top ni margin.                                   */
+/*                                                                      */
+/* Los efectos de hover van dentro de `@media (hover: hover)`. En una    */
+/* pantalla táctil el "hover" se queda pegado después de tocar, y una    */
+/* imagen que se agranda sola al tocarla se lee como un zoom accidental. */
 /* ------------------------------------------------------------------ */
 
-/* 1. Secuencia de carga del héroe. Las líneas del titular se revelan de
-      abajo hacia arriba con máscara, escalonadas 90ms. El retraso lo pone
-      cada línea con --retraso. Toda la secuencia cierra bajo 1.2s. */
-.heroe-linea {
-  display: block;
-  animation: revelar-linea 650ms var(--sierra) both;
+/* --- 1. Entrada del héroe ---------------------------------------- */
+
+.heroe-entra {
+  animation: subir-suave 1000ms var(--suave) both;
   animation-delay: var(--retraso, 0ms);
 }
 
-@keyframes revelar-linea {
-  from {
-    clip-path: inset(100% 0 0 0);
-    transform: translateY(0.18em);
-  }
-  to {
-    /* Inset negativo arriba y abajo para no cortar acentos ni descendentes. */
-    clip-path: inset(-25% 0 -25% 0);
-    transform: translateY(0);
-  }
-}
-
-.heroe-aparece {
-  animation: aparecer-suave 500ms var(--sierra) both;
-  animation-delay: var(--retraso, 0ms);
-}
-
-@keyframes aparecer-suave {
+@keyframes subir-suave {
   from {
     opacity: 0;
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
+    transform: none;
   }
 }
 
-/* 4. Revelado de titulares de sección al hacer scroll. SOLO los titulares.
-      El contenido de abajo aparece ya puesto, sin animar. */
+/* La foto del héroe entra con un acercamiento muy leve y se asienta. */
+.heroe-fondo-entra {
+  animation: asentar 2200ms var(--suave) both;
+}
+
+@keyframes asentar {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* --- 2. Revelado al hacer scroll --------------------------------- */
+
+/* `.revelar` sirve para cualquier cosa: titulares, párrafos, tarjetas.
+   El escalonado lo pone cada elemento con --retraso. */
+.revelar {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 900ms var(--suave),
+    transform 900ms var(--suave);
+  transition-delay: var(--retraso, 0ms);
+}
+
+.revelar.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Alias del nombre viejo, por si queda algún uso. */
 .revelar-titular {
   opacity: 0;
   transform: translateY(16px);
@@ -261,62 +255,129 @@
   transform: none;
 }
 
-/* Sin JavaScript el titular tiene que verse igual. */
+/* Sin JavaScript todo tiene que verse igual. */
+.no-js .revelar,
 .no-js .revelar-titular {
   opacity: 1;
   transform: none;
 }
 
-/* 5. Hover en tarjetas de especie: la imagen escala dentro de su marco y el
-      eyebrow pasa a ocote. Sin levantar sombras, sin translateY. */
+/* --- 3. Tarjetas -------------------------------------------------- */
+
 .marco-especie {
   overflow: hidden;
 }
 
 .marco-especie img,
 .marco-especie .marcador-foto {
-  transition: transform 400ms var(--sierra);
+  transition: transform 800ms var(--suave);
+  will-change: transform;
 }
 
-.tarjeta-especie:hover .marco-especie img,
-.tarjeta-especie:hover .marco-especie .marcador-foto,
+.tarjeta p:first-of-type,
+.tarjeta h2,
+.tarjeta h3 {
+  transition: color 400ms var(--suave);
+}
+
+/* El foco por teclado sí mueve la imagen en cualquier dispositivo: ahí no hay
+   ambigüedad, el usuario navegó hasta la tarjeta a propósito. */
+.tarjeta:focus-within .marco-especie img,
+.tarjeta:focus-within .marco-especie .marcador-foto,
 .tarjeta-especie:focus-within .marco-especie img,
 .tarjeta-especie:focus-within .marco-especie .marcador-foto {
-  transform: scale(1.03);
+  transform: scale(1.04);
 }
 
-.tarjeta-especie .eyebrow-especie {
-  transition: color 400ms var(--sierra);
-}
+@media (hover: hover) and (pointer: fine) {
+  .tarjeta:hover .marco-especie img,
+  .tarjeta:hover .marco-especie .marcador-foto,
+  .tarjeta-especie:hover .marco-especie img,
+  .tarjeta-especie:hover .marco-especie .marcador-foto {
+    transform: scale(1.04);
+  }
 
-.tarjeta-especie:hover .eyebrow-especie,
-.tarjeta-especie:focus-within .eyebrow-especie {
-  color: theme('colors.ocote');
-}
+  /* El acento es `ocote-tinta`, no `ocote`: sobre fondo claro `ocote` da 3.1 y
+     reprueba. Un estado de hover cumple igual que uno de reposo. */
+  .tarjeta:hover p:first-of-type,
+  .tarjeta:hover h2,
+  .tarjeta:hover h3 {
+    color: theme('colors.ocote-tinta');
+  }
 
-/* 7. La línea del proceso. Único efecto scroll-driven del sitio: la troza
-      avanzando por la línea de producción. Fallback estático donde no haya
-      soporte, que es el estado por defecto de la regla. */
-.linea-proceso {
-  transform-origin: top center;
-}
+  /* Sobre la banda oscura el acento es el ámbar claro. */
+  .bg-verde-tinta .tarjeta:hover p:first-of-type,
+  .bg-verde-tinta .tarjeta:hover h2,
+  .bg-verde-tinta .tarjeta:hover h3 {
+    color: theme('colors.ocote');
+  }
 
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .linea-proceso {
-      animation: dibujar-linea linear both;
-      animation-timeline: view();
-      animation-range: entry 15% cover 55%;
-    }
+  .tarjeta-especie:hover .eyebrow-especie,
+  .tarjeta-especie:focus-within .eyebrow-especie {
+    color: theme('colors.ocote-tinta');
   }
 }
 
-@keyframes dibujar-linea {
-  from {
-    transform: scaleY(0);
+/* --- 4. Navegación ------------------------------------------------ */
+
+/* Subrayado que crece desde la izquierda. Se dibuja con un pseudoelemento
+   para poder animar `transform` y no `width`. */
+.enlace-nav {
+  position: relative;
+}
+
+.enlace-nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.4rem;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 380ms var(--suave);
+}
+
+.enlace-nav[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .enlace-nav:hover::after {
+    transform: scaleX(1);
   }
-  to {
-    transform: scaleY(1);
+}
+
+/* --- 5. Botones --------------------------------------------------- */
+
+.flecha {
+  @apply inline-block transition-transform duration-micro ease-sierra;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .boton:hover .flecha {
+    transform: translateX(4px);
+  }
+}
+
+.boton:focus-visible .flecha {
+  transform: translateX(4px);
+}
+
+/* --- 6. Botón flotante de WhatsApp -------------------------------- */
+
+.wa-flotante {
+  bottom: calc(var(--hueco-barra, 0px) + 1rem);
+  transition:
+    bottom 300ms var(--suave),
+    background-color 320ms var(--suave),
+    transform 380ms var(--suave);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wa-flotante:hover {
+    transform: scale(1.06);
   }
 }
 
@@ -353,5 +414,55 @@
 
   .linea-proceso {
     transform: scaleY(1) !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Collage en celular                                                   */
+/*                                                                      */
+/* En una columna las fotos ocupaban el ancho entero y había que        */
+/* desplazar muchísimo para recorrer un listado. A dos columnas se ven   */
+/* más chicas, entra el doble por pantalla y el bloque ancho cada cuatro */
+/* le da ritmo en vez de dejar una cuadrícula plana.                     */
+/*                                                                      */
+/* Va con `max-width` y no con un `sm:` de Tailwind porque tiene que     */
+/* pisar las utilidades de proporción del marcador de foto.              */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 639px) {
+  .collage {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 0.75rem;
+  }
+
+  .collage .marco-especie img,
+  .collage .marco-especie .marcador-foto {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* Uno de cada TRES cruza las dos columnas y va apaisado. Con ciclo de cuatro
+     el cuarto quedaba solo en su fila y el quinto saltaba a la siguiente,
+     dejando un hueco; con tres la cuadrícula encaja sin sobrantes. */
+  .collage > li:nth-child(3n + 1) {
+    grid-column: span 2;
+  }
+
+  .collage > li:nth-child(3n + 1) .marco-especie img,
+  .collage > li:nth-child(3n + 1) .marco-especie .marcador-foto {
+    aspect-ratio: 16 / 9;
+  }
+
+  /* El título de tarjeta baja de cuerpo: en media columna, 22px parte
+     los nombres largos en tres líneas. */
+  .collage > li > p:first-of-type,
+  .collage > li > h2,
+  .collage > li > h3 {
+    font-size: 1.0625rem;
+    line-height: 1.2;
+    margin-top: 0.75rem;
+  }
+
+  .collage > li > p:last-of-type {
+    font-size: 0.8125rem;
   }
 }

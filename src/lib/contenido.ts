@@ -6,14 +6,7 @@
  * una sola página.
  */
 import { getCollection } from 'astro:content';
-import type {
-  Especie,
-  EtapaProceso,
-  PerfilCliente,
-  Producto,
-  Servicio,
-  CategoriaProducto,
-} from '@/types/contenido';
+import type { Acabado, CategoriaProducto, Especie, Producto, Servicio } from '@/types/contenido';
 
 const porOrden = (a: { orden: number }, b: { orden: number }): number => a.orden - b.orden;
 
@@ -36,16 +29,6 @@ export async function obtenerServicios(): Promise<Servicio[]> {
   return entradas.map(({ id, data }) => ({ slug: id, ...data })).sort(porOrden);
 }
 
-export async function obtenerProceso(): Promise<EtapaProceso[]> {
-  const entradas = await getCollection('proceso');
-  return entradas.map(({ id, data }) => ({ slug: id, ...data })).sort(porOrden);
-}
-
-export async function obtenerPerfiles(): Promise<PerfilCliente[]> {
-  const entradas = await getCollection('perfiles');
-  return entradas.map(({ id, data }) => ({ slug: id, ...data })).sort(porOrden);
-}
-
 /** Productos de una especie, en el orden del catálogo. */
 export async function productosDeEspecie(slugEspecie: string): Promise<Producto[]> {
   return (await obtenerProductos()).filter((producto) =>
@@ -59,6 +42,17 @@ export async function especiesDeProducto(slugProducto: string): Promise<Especie[
     especie.productos.includes(slugProducto),
   );
 }
+
+/**
+ * Los acabados se guardan sin tilde porque son llaves, no texto. Para pintarlos
+ * hay que pasar por acá: en la interfaz va "Rústica", no "rustica".
+ */
+export const ETIQUETA_ACABADO: Record<Acabado, string> = {
+  rustica: 'Rústica',
+  cepillada: 'Cepillada',
+  secada: 'Secada',
+  curada: 'Curada',
+};
 
 export const ETIQUETA_CATEGORIA: Record<CategoriaProducto, string> = {
   construccion: 'Construcción',

@@ -3,7 +3,6 @@ import '@/styles/global.css';
 import Encabezado from '@/components/Encabezado.astro';
 import PieDePagina from '@/components/PieDePagina.astro';
 import BotonWhatsApp from '@/components/BotonWhatsApp.astro';
-import BarraTotal from '@/components/isla/BarraTotal';
 import { mensajeDeContexto } from '@/lib/whatsapp';
 import {
   DIRECCION,
@@ -20,13 +19,11 @@ interface Props {
   titulo: string;
   descripcion: string;
   contexto: Parameters<typeof mensajeDeContexto>[0];
-  /** `/cotizar` y `/gracias` ya muestran la lista completa; ahí sobra la barra. */
-  sinBarra?: boolean;
-  /** `/gracias` y el 404 no tienen por qué estar en el índice. */
+  /** El 404 no tiene por qué estar en el índice. */
   noIndexar?: boolean;
 }
 
-const { titulo, descripcion, contexto, sinBarra = false, noIndexar = false } = Astro.props;
+const { titulo, descripcion, contexto, noIndexar = false } = Astro.props;
 
 const sitio = Astro.site ?? new URL('https://maderasdehonduras.hn');
 const canonica = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', sitio);
@@ -84,17 +81,10 @@ if (MAPA_LAT !== null && MAPA_LNG !== null) {
     <link rel="icon" href="/logo.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#0E2A1D" />
 
-    <!-- Las dos fuentes del primer pintado. La monoespaciada carga con swap. -->
+    <!-- Una sola fuente para todo el sitio: un archivo, una petición. -->
     <link
       rel="preload"
-      href="/fonts/archivo-latin.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/fonts/instrument-sans-latin.woff2"
+      href="/fonts/libre-franklin-latin.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -132,18 +122,23 @@ if (MAPA_LAT !== null && MAPA_LNG !== null) {
     <PieDePagina />
 
     <BotonWhatsApp mensaje={mensajeDeContexto(contexto)} />
-    {!sinBarra && <BarraTotal client:idle />}
 
     <script>
       /**
-       * El único observador del sitio. Revela los titulares de sección y nada
-       * más: el contenido de abajo aparece ya puesto.
+       * El único observador del sitio. Revela cualquier cosa marcada con
+       * `.revelar` (o el nombre viejo `.revelar-titular`) cuando entra en
+       * pantalla, una sola vez.
+       *
+       * El umbral es bajo y con margen negativo abajo: así el elemento arranca
+       * a aparecer cuando asoma, no cuando ya está a media pantalla. Con
+       * bloques altos —una grilla de tarjetas— un umbral de 0.4 no se cumple
+       * nunca en un teléfono y el contenido se quedaría invisible.
        */
-      const titulares = document.querySelectorAll<HTMLElement>('.revelar-titular');
+      const revelables = document.querySelectorAll<HTMLElement>('.revelar, .revelar-titular');
       const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       if (sinMovimiento || !('IntersectionObserver' in window)) {
-        titulares.forEach((titular) => titular.classList.add('visible'));
+        revelables.forEach((el) => el.classList.add('visible'));
       } else {
         const observador = new IntersectionObserver(
           (entradas) => {
@@ -153,9 +148,9 @@ if (MAPA_LAT !== null && MAPA_LNG !== null) {
               observador.unobserve(entrada.target);
             }
           },
-          { threshold: 0.4 },
+          { threshold: 0.08, rootMargin: '0px 0px -8% 0px' },
         );
-        titulares.forEach((titular) => observador.observe(titular));
+        revelables.forEach((el) => observador.observe(el));
       }
     </script>
   </body>

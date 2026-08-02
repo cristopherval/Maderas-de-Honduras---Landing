@@ -13,7 +13,7 @@ const { mensaje } = Astro.props;
   href={urlWhatsApp(mensaje)}
   target="_blank"
   rel="noopener noreferrer"
-  class="wa-flotante fixed right-4 z-30 flex h-14 w-14 items-center justify-center border-hair border-verde-tinta bg-verde-monte text-cal transition-colors duration-micro ease-sierra hover:bg-verde-tinta lg:right-6"
+  class="wa-flotante fixed right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-verde-monte text-cal hover:bg-ocote-tinta lg:right-6"
 >
   <span class="sr-only">Escribir por WhatsApp</span>
   <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
@@ -23,12 +23,5 @@ const { mensaje } = Astro.props;
   </svg>
 </a>
 
-<style>
-  /* Se acomoda arriba de la barra fija cuando hay partidas en la lista. */
-  .wa-flotante {
-    bottom: calc(var(--hueco-barra, 0px) + 1rem);
-    transition:
-      bottom 200ms var(--sierra),
-      background-color 200ms var(--sierra);
-  }
-</style>
+{/* El estilo del botón (posición, transiciones y el hover) vive en global.css,
+    junto al resto del sistema de animación. */}

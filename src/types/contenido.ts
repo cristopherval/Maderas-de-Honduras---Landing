@@ -14,7 +14,7 @@ export type Acabado = 'rustica' | 'cepillada' | 'secada' | 'curada';
 export type CategoriaProducto = 'construccion' | 'industria' | 'combustible';
 
 /** Variante tonal de la banda de cada especie. Solo verdes, nunca colores nuevos. */
-export type TonoEspecie = 'tinta' | 'monte' | 'musgo' | 'aserrin';
+export type TonoEspecie = 'tinta' | 'monte' | 'aserrin';
 
 /** Proporción del marcador de foto. Fija el `aspect-ratio` para que CLS sea 0. */
 export type ProporcionFoto = '16/9' | '4/5' | '1/1' | '3/2';
@@ -63,6 +63,7 @@ export interface Producto {
   readonly unidad: string | null;
   /** Slugs de especie. Ver TODO en productos.json. */
   readonly especies: readonly string[];
+  readonly foto: MarcadorFoto;
   readonly orden: number;
 }
 
@@ -70,62 +71,19 @@ export interface Servicio {
   readonly slug: string;
   readonly nombre: string;
   readonly que_hace: string;
-  /** Renglón en monoespaciada, tono de ficha técnica. */
+  /** Renglón de ficha técnica. */
   readonly especificacion: string;
-  readonly orden: number;
-}
-
-export interface EtapaProceso {
-  readonly slug: string;
-  readonly nombre: string;
-  readonly descripcion: string;
   readonly foto: MarcadorFoto;
   readonly orden: number;
 }
 
-export interface PerfilCliente {
-  readonly slug: string;
-  readonly nombre: string;
-  /** La razón concreta por la que a este perfil le conviene. Sin relleno. */
-  readonly razon: string;
-  readonly orden: number;
-}
-
-/* ------------------------------------------------------------------ */
-/* Lista de cotización                                                 */
-/* ------------------------------------------------------------------ */
-
-/** Una línea de la hoja de conteo. Medidas en pulgadas y pies. */
-export interface Partida {
-  readonly id: string;
-  readonly especie: string;
-  /** Pulgadas. */
-  readonly espesor: number;
-  /** Pulgadas. */
-  readonly ancho: number;
-  /** Pies. */
-  readonly largo: number;
-  readonly piezas: number;
-  readonly acabado: Acabado;
-}
-
-export interface SolicitudCotizacion {
-  readonly nombre: string;
-  readonly empresa: string;
-  readonly telefono: string;
-  readonly correo: string;
-  readonly ciudad: string;
-  readonly proyecto: string;
-  /** ISO `YYYY-MM-DD` o cadena vacía. */
-  readonly fecha_requerida: string;
-  readonly requiere_transporte: boolean;
-  readonly direccion_entrega: string;
-  readonly notas: string;
-  readonly partidas: readonly Partida[];
-  /** Total en pies tablares, calculado, no capturado. */
-  readonly total_pt: number;
-}
-
-export type ResultadoEnvio =
-  | { readonly ok: true; readonly via: 'whatsapp' | 'supabase' }
-  | { readonly ok: false; readonly motivo: string };
+/*
+ * Se fueron con la calculadora: `Partida`, `SolicitudCotizacion` y
+ * `ResultadoEnvio`. El sitio ya no arma listas de despiece ni calcula pies
+ * tablares; el contacto es un formulario de tres campos que abre WhatsApp.
+ *
+ * Se fueron con sus páginas: `EtapaProceso` (la vieja `/proceso`, que ahora es
+ * `/servicios` y sale de servicios.json) y `PerfilCliente` (el bloque de "a
+ * quién le vendemos", que era otra forma de decirle al que compra poco que no
+ * es su lugar).
+ */

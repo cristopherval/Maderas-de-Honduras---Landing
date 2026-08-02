@@ -1,170 +1,76 @@
 ---
 import Base from '@/layouts/Base.astro';
-import TituloSeccion from '@/components/TituloSeccion.astro';
+import AyudaWhatsApp from '@/components/AyudaWhatsApp.astro';
 import MarcadorFoto from '@/components/MarcadorFoto.astro';
-import { obtenerPerfiles, obtenerServicios } from '@/lib/contenido';
-import {
-  ANIO_PLANTA_PROPIA,
-  DIRECCION,
-  ESPECIES_CANTIDAD,
-  MINIMO_ENVIO_PT,
-  PRODUCTOS_CANTIDAD,
-} from '@/data/empresa';
-import { formatearPT } from '@/lib/piesTablares';
+import { ANIO_PLANTA_PROPIA, DIRECCION } from '@/data/empresa';
 
-const servicios = await obtenerServicios();
-const perfiles = await obtenerPerfiles();
-
-// TODO: confirmar línea de tiempo con el cliente. Dice "13 años en el rubro" y
-// "planta propia desde 2013", que no cuadran. Aquí solo se publica el dato duro.
-const TIEMPOS = [
-  {
-    rotulo: 'Primero',
-    titulo: 'Revendedores',
-    texto:
-      'Comprábamos madera a otros aserraderos y la entregábamos. Aprendimos el negocio del lado del que compra: qué se pide, qué llega mal y qué le hace perder plata a una obra.',
-  },
-  {
-    rotulo: 'Después',
-    titulo: 'Locales con maquinaria alquilada',
-    texto:
-      'Alquilamos locales con maquinaria para procesar nosotros mismos. Dejamos de depender de lo que otro cortaba y empezamos a entregar la medida exacta que pedía el cliente.',
-  },
-  {
-    rotulo: `Desde ${ANIO_PLANTA_PROPIA}`,
-    titulo: 'Planta procesadora propia',
-    texto:
-      'Aserramos, dimensionamos, secamos, cepillamos, curamos y despachamos con transporte propio. Todo en el mismo lugar, y por eso podemos responder por la medida y por la fecha.',
-  },
-];
-
+/**
+ * Corta y sin épica. Se fue la banda de estadísticas (especies, productos,
+ * mínimo por envío, año) y se fue el bloque de "a quién le vendemos": listar
+ * constructoras, arquitectos y madereras es otra forma de decirle al que
+ * compra poco que no es su lugar.
+ */
+/**
+ * Las dos tomas de la planta. Igual que en la portada, son de relleno con
+ * licencia libre —ver CREDITOS-RELLENO.json— y hay que cambiarlas por fotos
+ * reales antes de publicar.
+ */
 const FOTOS_PLANTA = [
   {
-    toma: 'Vista general del patio de la planta con las estibas al fondo, plano abierto de mañana',
-    alt: 'Vista general del patio de la planta con estibas de madera al fondo',
-    proporcion: '16/9',
-  },
-  {
     toma: 'El portón de entrada con el rótulo de la empresa, desde la calle hacia Valle Arriba',
-    alt: 'Portón de entrada de la planta con el rótulo de Maderas de Honduras',
+    alt: 'Entrada de la planta con madera apilada',
     proporcion: '3/2',
+    archivo: 'planta-tabla.jpg',
   },
   {
     toma: 'El equipo de la planta en el área de dimensionado, sin poses, trabajando',
-    alt: 'Equipo de la planta trabajando en el área de dimensionado',
+    alt: 'Área de dimensionado de la planta con herramienta y madera sobre el banco',
     proporcion: '3/2',
+    archivo: 'planta-taller.jpg',
   },
 ] as const;
 ---
 
 <Base
   titulo="Nosotros"
-  descripcion={`De revendedores a planta procesadora propia desde ${ANIO_PLANTA_PROPIA}. Aserramos, dimensionamos, secamos y despachamos con transporte propio desde el km 60 de la carretera a Olancho.`}
+  descripcion={`Aserradero y planta procesadora propia desde ${ANIO_PLANTA_PROPIA}. ${DIRECCION.corta}. Se puede venir a ver.`}
   contexto={{ tipo: 'nosotros' }}
 >
-  <section class="plano pb-16 pt-12 lg:pb-20 lg:pt-16">
-    <TituloSeccion rotulo="Nosotros" nivel="h1">
-      De revender a procesar
-      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
-        Tres tiempos, en orden. No hay épica: hay una progresión que se puede verificar viniendo a
-        la planta.
-      </p>
-    </TituloSeccion>
-  </section>
-
-  <section class="plano pb-16 lg:pb-24">
-    <MarcadorFoto foto={FOTOS_PLANTA[0]} tono="monte" prioritaria />
-
-    <ol class="mt-12 grid gap-10 lg:grid-cols-3 lg:gap-12">
-      {
-        TIEMPOS.map((tiempo) => (
-          <li class="border-t-[3px] border-verde-tinta pt-5">
-            <p class="font-dato text-spec uppercase text-verde-monte">{tiempo.rotulo}</p>
-            <h2 class="mt-3 text-display-2 ancho-normal text-verde-tinta">{tiempo.titulo}</h2>
-            <p class="mt-3 max-w-medida text-base text-verde-tinta">{tiempo.texto}</p>
-          </li>
-        ))
-      }
-    </ol>
-  </section>
-
-  <!-- La planta -->
-  <section class="border-y-hair border-verde-musgo/40 bg-aserrin py-20 lg:py-28">
-    <div class="plano">
-      <TituloSeccion rotulo="Planta">
-        Qué hay en la planta
-        <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
-          Está en {DIRECCION.corta}, sobre la calle hacia Valle Arriba. Se puede venir a ver.
-        </p>
-      </TituloSeccion>
-
-      <div class="mt-12 grid gap-8 lg:grid-cols-2">
-        <MarcadorFoto foto={FOTOS_PLANTA[1]} tono="monte" />
-        <MarcadorFoto foto={FOTOS_PLANTA[2]} tono="tinta" />
-      </div>
-
-      <dl class="mt-12 grid grid-cols-2 gap-x-8 gap-y-6 border-t-hair border-verde-monte pt-8 lg:grid-cols-4">
-        <div>
-          <dt class="font-dato text-spec-sm uppercase text-verde-monte">Especies</dt>
-          <dd class="mt-1 font-dato text-dato-xl text-verde-tinta">{ESPECIES_CANTIDAD}</dd>
-        </div>
-        <div>
-          <dt class="font-dato text-spec-sm uppercase text-verde-monte">Productos</dt>
-          <dd class="mt-1 font-dato text-dato-xl text-verde-tinta">{PRODUCTOS_CANTIDAD}</dd>
-        </div>
-        <div>
-          <dt class="font-dato text-spec-sm uppercase text-verde-monte">Mínimo por envío</dt>
-          <dd class="mt-1 font-dato text-dato-xl text-verde-tinta">
-            {formatearPT(MINIMO_ENVIO_PT)} pt
-          </dd>
-        </div>
-        <div>
-          <dt class="font-dato text-spec-sm uppercase text-verde-monte">Planta propia desde</dt>
-          <dd class="mt-1 font-dato text-dato-xl text-verde-tinta">{ANIO_PLANTA_PROPIA}</dd>
-        </div>
-      </dl>
-
-      <ul class="mt-10 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
-        {
-          servicios.map((servicio) => (
-            <li class="border-t-hair border-verde-monte pt-3">
-              <span class="text-display-2 ancho-normal text-verde-tinta">{servicio.nombre}</span>
-              <span class="mt-1 block font-dato text-dato-sm text-verde-monte">
-                {servicio.especificacion}
-              </span>
-            </li>
-          ))
-        }
-      </ul>
+  <section class="bg-cal">
+    <div class="plano pb-10 pt-14 lg:pt-20">
+    <h1 class="revelar max-w-[18ch] text-display-hero text-verde-tinta">
+      Planta propia desde {ANIO_PLANTA_PROPIA}
+    </h1>
+    <p class="revelar mt-6 max-w-medida text-lead text-verde-tinta" style="--retraso: 90ms">
+      Empezamos revendiendo madera de otros aserraderos. Después alquilamos locales con maquinaria
+      para procesarla nosotros. Desde {ANIO_PLANTA_PROPIA} tenemos planta propia: aserramos,
+      dimensionamos, secamos, cepillamos y curamos en el mismo lugar.
+    </p>
     </div>
   </section>
 
-  <!-- A quién le vendemos -->
-  <section class="plano py-20 lg:py-28">
-    <TituloSeccion rotulo="Clientes">
-      A quién le vendemos
-      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
-        Vendemos por volumen a quien compra por volumen.
+  <section class="bg-aserrin">
+    <div class="plano py-10 lg:py-14">
+      <h2 class="revelar rotulo">La planta</h2>
+      <p class="mt-4 max-w-medida text-base text-verde-tinta">
+        {DIRECCION.linea}. Se puede venir a ver en horario de trabajo.
       </p>
-    </TituloSeccion>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+        {
+          FOTOS_PLANTA.map((foto, indice) => (
+            <MarcadorFoto foto={foto} tono={indice === 0 ? 'monte' : 'tinta'} proporcion="3/2" />
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
-    <dl class="mt-12 border-t-hair border-verde-tinta">
-      {
-        perfiles.map((perfil) => (
-          <div class="grid gap-x-8 gap-y-1 border-b-hair border-verde-musgo/50 py-6 lg:grid-cols-[16rem_1fr]">
-            <dt class="font-dato text-spec uppercase text-verde-monte">{perfil.nombre}</dt>
-            <dd class="max-w-medida text-base text-verde-tinta">{perfil.razon}</dd>
-          </div>
-        ))
-      }
-    </dl>
-
-    <div class="mt-12 flex flex-wrap gap-3">
-      <a href="/cotizar" class="boton-cotizar">
-        Pedir cotización
-        <span class="flecha" aria-hidden="true">&rarr;</span>
-      </a>
-      <a href="/contacto" class="boton-linea">Ver teléfonos y horario</a>
+  <section class="bg-verde-tinta text-cal">
+    <div class="plano py-12 lg:py-16">
+      <AyudaWhatsApp
+        titulo="Vení a la planta, o escribinos y te ayudamos."
+        mensaje="Buenas. Quiero consultar por un pedido de madera."
+      />
     </div>
   </section>
 </Base>

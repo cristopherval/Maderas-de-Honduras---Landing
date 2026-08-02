@@ -33,18 +33,48 @@ export const WHATSAPP_PRINCIPAL = '50488439226';
 export const EMAIL_CONTACTO: string | null = null;
 
 /**
+ * Video de fondo del héroe. Mientras sea `null` se pinta la foto de fondo.
+ *
+ * Cuando el cliente entregue el video: se deja el archivo en `public/video/`
+ * y acá se pone la ruta, por ejemplo `/video/planta.mp4`. La maqueta no se
+ * toca; el héroe ya lo contempla, con `poster`, silenciado y respetando
+ * `prefers-reduced-motion`.
+ *
+ * Que sea corto (8–15 s), en bucle, sin audio y bien comprimido: es lo primero
+ * que carga la portada y pesa más que todo lo demás junto.
+ */
+export const VIDEO_HEROE: string | null = null;
+
+/**
  * No existen todavía. Un pie de página con iconos sin enlace grita
  * "sitio abandonado". Mientras esté vacío, el bloque no se renderiza.
  */
 export const REDES: readonly { readonly nombre: string; readonly url: string }[] = [];
 
 /**
- * TODO: confirmar coordenadas con el cliente (tomarlas en la planta con el GPS
- * del teléfono). Mientras sean `null` no se pinta mapa ni se emite `geo` en el
- * JSON-LD; se muestra la dirección escrita y un botón de búsqueda en Maps.
+ * Coordenadas de la planta, del pin que pasó el cliente:
+ * https://maps.app.goo.gl/BBnoVRTaHxCKBAXF9
+ *
+ * Con esto ya se pinta el mapa, `urlComoLlegar()` apunta al punto exacto en vez
+ * de a una búsqueda por texto, y el JSON-LD emite `geo`.
+ *
+ * TODO: el cliente todavía no tiene perfil de empresa en Google. Cuando lo
+ * cree, conviene enlazar la ficha en vez del pin suelto: sale con nombre,
+ * horario y reseñas.
  */
-export const MAPA_LAT: number | null = null;
-export const MAPA_LNG: number | null = null;
+export const MAPA_LAT: number | null = 14.427782;
+export const MAPA_LNG: number | null = -87.045227;
+
+/**
+ * Mapa incrustado de Google Maps.
+ *
+ * `output=embed` no pide clave de API. El botón de "Cómo llegar" apunta al
+ * mismo punto pero abre Maps para navegar.
+ */
+export function urlMapaIncrustado(zoom = 15): string {
+  if (MAPA_LAT === null || MAPA_LNG === null) return '';
+  return `https://www.google.com/maps?q=${MAPA_LAT},${MAPA_LNG}&z=${zoom}&hl=es&output=embed`;
+}
 
 export const HORARIO = [
   { dias: 'Lunes a viernes', abre: '7:00 a.m.', cierra: '5:00 p.m.', iso: ['Mo', 'Tu', 'We', 'Th', 'Fr'], isoAbre: '07:00', isoCierra: '17:00' },
@@ -52,8 +82,15 @@ export const HORARIO = [
   { dias: 'Domingos', abre: null, cierra: null, iso: ['Su'], isoAbre: null, isoCierra: null },
 ] as const;
 
-/** Mínimo por envío con transporte propio, en pies tablares. */
-export const MINIMO_ENVIO_PT = 10_000;
+/**
+ * Cómo se habla del volumen.
+ *
+ * El sitio NO publica un mínimo de compra ni promete entrega. Decir "mínimo
+ * 10,000 pies tablares" es mandar a la calle al que compra poco, y prometer
+ * transporte es comprometer algo que la planta no cubre a cualquier distancia.
+ * Se dice lo que sí es cierto y nada más: se trabaja por volumen.
+ */
+export const NOTA_VOLUMEN = 'Trabajamos por volumen';
 
 /**
  * TODO: confirmar línea de tiempo con el cliente. Dice "13 años en el rubro" y
@@ -62,8 +99,6 @@ export const MINIMO_ENVIO_PT = 10_000;
  */
 export const ANIO_PLANTA_PROPIA = 2013;
 
-export const ESPECIES_CANTIDAD = 4;
-export const PRODUCTOS_CANTIDAD = 11;
 
 /** Enlace a Google Maps por texto mientras no haya coordenadas confirmadas. */
 export function urlComoLlegar(): string {

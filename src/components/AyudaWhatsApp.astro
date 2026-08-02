@@ -1,0 +1,55 @@
+---
+import { urlWhatsApp } from '@/lib/whatsapp';
+import { TELEFONOS, urlTelefono } from '@/data/empresa';
+
+/**
+ * Llamada a la acción hacia WhatsApp.
+ *
+ * El sitio no publica precios, así que la conversación es el producto: cada
+ * página tiene que terminar con una puerta abierta y no con un callejón.
+ */
+interface Props {
+  /** Mensaje que va precargado en WhatsApp. Nunca un "Hola" pelado. */
+  mensaje: string;
+  titulo?: string;
+  /** `claro` para bandas oscuras. */
+  variante?: 'claro' | 'oscuro';
+  /** El teléfono al lado del botón. Se omite donde ya está listado. */
+  conTelefono?: boolean;
+}
+
+const {
+  mensaje,
+  titulo = '¿No encontrás lo que buscás? Nosotros te ayudamos.',
+  variante = 'claro',
+  conTelefono = true,
+} = Astro.props;
+
+const claro = variante === 'claro';
+const colorTitulo = claro ? 'text-cal' : 'text-verde-tinta';
+const colorApoyo = claro ? 'text-aserrin' : 'text-verde-monte';
+const claseBotonDos = claro ? 'boton-linea-claro' : 'boton-linea';
+---
+
+<div class="flex flex-wrap items-center justify-between gap-6">
+  <div>
+    <p class:list={['revelar max-w-medida text-display-2', colorTitulo]}>{titulo}</p>
+    <p class:list={['mt-2 text-sm', colorApoyo]}>
+      Escribinos por WhatsApp y te respondemos en horario de planta.
+    </p>
+  </div>
+
+  <div class="flex flex-wrap gap-3">
+    <a href={urlWhatsApp(mensaje)} target="_blank" rel="noopener noreferrer" class="boton-cotizar">
+      Escribir por WhatsApp
+      <span class="flecha" aria-hidden="true">&rarr;</span>
+    </a>
+    {
+      conTelefono && TELEFONOS[0] && (
+        <a href={urlTelefono(TELEFONOS[0])} class={claseBotonDos}>
+          Llamar {TELEFONOS[0]}
+        </a>
+      )
+    }
+  </div>
+</div>

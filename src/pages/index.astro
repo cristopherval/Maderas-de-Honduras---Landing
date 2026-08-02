@@ -1,312 +1,284 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
-import TituloSeccion from '@/components/TituloSeccion.astro';
-import FranjaEspecificacion from '@/components/FranjaEspecificacion.astro';
-import DivisorEstrellas from '@/components/DivisorEstrellas.astro';
 import MarcadorFoto from '@/components/MarcadorFoto.astro';
-import Calculadora from '@/components/isla/Calculadora';
-import ResumenCierre from '@/components/isla/ResumenCierre';
-import { obtenerEspecies, obtenerPerfiles, obtenerServicios } from '@/lib/contenido';
-import { ANIO_PLANTA_PROPIA, MINIMO_ENVIO_PT } from '@/data/empresa';
-import { formatearPT } from '@/lib/piesTablares';
+import heroe from '@/assets/fotos/heroe.jpg';
+import { ETIQUETA_ACABADO, obtenerEspecies, obtenerProductos, obtenerServicios } from '@/lib/contenido';
+import {
+  ANIO_PLANTA_PROPIA,
+  DIRECCION,
+  HORARIO,
+  NOTA_VOLUMEN,
+  TELEFONOS,
+  VIDEO_HEROE,
+  urlComoLlegar,
+  urlMapaIncrustado,
+  urlTelefono,
+} from '@/data/empresa';
 
+/**
+ * Portada de catálogo.
+ *
+ * Orden: héroe → productos → nosotros → servicios → especies → ubicación.
+ *
+ * Las secciones se separan SOLO por color de fondo: cal → aserrín → verde-tinta
+ * → cal → aserrín. No hay filetes de división en ningún lado.
+ */
 const especies = await obtenerEspecies();
+const productos = await obtenerProductos();
 const servicios = await obtenerServicios();
-const perfiles = await obtenerPerfiles();
 
-const opcionesEspecie = especies.map(({ slug, nombre, acabados }) => ({ slug, nombre, acabados }));
-const [destacada, ...secundarias] = especies;
+/** En la portada van seis; los once están en /productos. */
+const DESTACADOS = 6;
+const productosDestacados = productos.slice(0, DESTACADOS);
 
-// Secuencia de carga del héroe. Cierra en 1,120 ms.
-const LINEAS_TITULAR = ['Pino, roble, caoba', 'y cedro. Procesados', 'a tu medida.'];
+const nombreEspecie = (slug: string): string | undefined =>
+  especies.find((especie) => especie.slug === slug)?.nombre;
 
-const PASOS_COMPRA = [
-  {
-    numero: '01',
-    titulo: 'Cotizás',
-    texto: 'Mandás la lista de medidas y piezas. Si traés plano, mejor: cortamos a esa medida.',
-  },
-  {
-    numero: '02',
-    titulo: 'Te llamamos con precio',
-    texto: 'Revisamos volumen, especie y acabado, y te damos el precio por teléfono.',
-  },
-  {
-    numero: '03',
-    titulo: 'Despachamos',
-    texto: `Desde ${formatearPT(MINIMO_ENVIO_PT)} pies tablares sale con nuestro transporte a la dirección de entrega.`,
-  },
-];
+/**
+ * OJO: `planta-taller.jpg` y `heroe.jpg` son de relleno, con licencia libre.
+ * Ver CREDITOS-RELLENO.json. Hay que cambiarlas por fotos de la planta.
+ */
+const fotoPlanta = {
+  toma: 'Vista general del área de trabajo de la planta, con la madera dimensionada al fondo',
+  alt: 'Área de trabajo de la planta con madera dimensionada y herramienta sobre el banco',
+  proporcion: '3/2',
+  archivo: 'planta-taller.jpg',
+} as const;
 ---
 
 <Base
-  titulo="Aserradero y planta procesadora en Olancho"
-  descripcion={`Pino, roble, caoba y cedro cortados a tu medida. Secado, cepillado y curado en planta propia. Despachamos por camionada desde ${formatearPT(MINIMO_ENVIO_PT)} pies tablares con transporte propio.`}
+  titulo="Maderas de Honduras"
+  descripcion="Aserradero y planta procesadora en Honduras. Pino, roble, caoba y cedro cortados a pedido, secados, cepillados y curados en la misma planta. Km 60, carretera a Olancho."
   contexto={{ tipo: 'inicio' }}
 >
-  <!-- 1. Héroe calificador -->
-  <section class="plano pb-14 pt-12 lg:pb-20 lg:pt-20">
-    <p class="rotulo heroe-aparece" style="--retraso:0ms">
-      Aserradero &middot; Km 60, carretera a Olancho &middot; Planta propia desde {
-        ANIO_PLANTA_PROPIA
-      }
-    </p>
+  {/*
+    Héroe a sangre con fondo de video.
 
-    <h1 class="mt-6 text-display-hero ancho-expandido text-verde-tinta">
-      {
-        LINEAS_TITULAR.map((linea, indice) => (
-          <span class="heroe-linea" style={`--retraso:${60 + indice * 90}ms`}>
-            {linea}
-          </span>
-        ))
-      }
-    </h1>
-
-    <p
-      class="heroe-aparece mt-8 max-w-medida text-lead text-verde-tinta"
-      style="--retraso:420ms"
-    >
-      Despachamos por camionada desde {formatearPT(MINIMO_ENVIO_PT)} pies tablares, con transporte
-      propio. Armá tu lista aquí y te la cotizamos.
-    </p>
-
-    <div class="mt-12 grid gap-10 lg:grid-cols-[7fr_5fr] lg:gap-12">
-      <div class="heroe-aparece" style="--retraso:560ms">
-        <Calculadora especies={opcionesEspecie} client:load />
-      </div>
-
-      <div class="heroe-aparece flex flex-col justify-between gap-8" style="--retraso:560ms">
-        <div>
-          <h2 class="rotulo">Capacidad de planta</h2>
-          <ul class="mt-4">
-            {
-              servicios.map((servicio) => (
-                <li class="border-b-hair border-verde-musgo/40 py-3 first:border-t-hair first:border-verde-musgo/40">
-                  <span class="font-display text-display-2 ancho-normal text-verde-tinta">
-                    {servicio.nombre}
-                  </span>
-                  <span class="mt-1 block font-dato text-dato-sm text-verde-monte">
-                    {servicio.especificacion}
-                  </span>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-
-        <div class="flex flex-wrap gap-3">
-          <a href="/cotizar" class="boton-cotizar">
-            Pedir cotización
-            <span class="flecha" aria-hidden="true">&rarr;</span>
-          </a>
-          <a href="/productos" class="boton-linea">Ver los 11 productos</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 2. Franja de especificación -->
-  <FranjaEspecificacion retraso={620} />
-
-  <!-- 3. Especies -->
-  <section class="plano py-20 lg:py-28">
-    <TituloSeccion rotulo="Especies" id="especies">
-      Cuatro especies, cuatro trabajos distintos
-      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
-        No es lo mismo pedir para encofrado que para una puerta. Cada una se corta, se seca y se
-        entrega distinto.
-      </p>
-    </TituloSeccion>
-
+    Mientras `VIDEO_HEROE` sea `null` se pinta la foto. Cuando el cliente
+    entregue el video se llena esa constante en `data/empresa.ts` y esto pasa a
+    `<video>` solo, sin tocar nada más. Va silenciado, en bucle y con `poster`,
+    y `prefers-reduced-motion` lo congela en el póster.
+  */}
+  <section class="relative isolate flex min-h-[78svh] items-end overflow-hidden bg-verde-tinta">
     {
-      destacada && (
-        <a
-          href={`/especies/${destacada.slug}`}
-          class="tarjeta-especie mt-12 grid gap-6 border-t-hair border-verde-tinta pt-6 lg:grid-cols-2 lg:gap-10"
-        >
-          <div class="marco-especie">
-            <MarcadorFoto foto={destacada.foto} tono="monte" />
-          </div>
-          <div class="flex flex-col justify-between gap-6">
-            <div>
-              <p class="eyebrow-especie font-dato text-spec uppercase text-verde-monte">
-                {destacada.dato_dominante.etiqueta} &middot; {destacada.dato_dominante.valor}
-              </p>
-              <h3 class="mt-3 text-display-1 ancho-expandido text-verde-tinta">
-                {destacada.nombre}
-              </h3>
-              <p class="mt-4 max-w-medida text-base text-verde-tinta">{destacada.descripcion}</p>
-            </div>
-            <ul class="flex flex-wrap gap-x-4 gap-y-1">
-              {destacada.usos.map((uso) => (
-                <li class="font-dato text-dato-sm text-verde-monte">{uso}</li>
-              ))}
-            </ul>
-            <span class="font-dato text-dato-sm uppercase text-ocote-tinta underline underline-offset-4">
-              Ver la ficha del {destacada.nombre.toLowerCase()}
-              <span class="flecha" aria-hidden="true">
-                &rarr;
-              </span>
-            </span>
-          </div>
-        </a>
+      VIDEO_HEROE !== null ? (
+        <video
+          class="heroe-fondo absolute inset-0 -z-10 h-full w-full object-cover"
+          src={VIDEO_HEROE}
+          poster={heroe.src}
+          autoplay
+          muted
+          loop
+          playsinline
+          aria-hidden="true"
+        />
+      ) : (
+        <Image
+          src={heroe}
+          alt=""
+          widths={[720, 1280, 2000]}
+          sizes="100vw"
+          loading="eager"
+          fetchpriority="high"
+          class="heroe-fondo-entra absolute inset-0 -z-10 h-full w-full object-cover"
+        />
       )
     }
 
-    <div class="mt-12 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        secundarias.map((especie) => (
-          <a
-            href={`/especies/${especie.slug}`}
-            class="tarjeta-especie flex flex-col border-t-hair border-verde-tinta pt-6"
-          >
-            <div class="marco-especie">
-              <MarcadorFoto foto={especie.foto} tono={especie.tono} proporcion="4/5" />
-            </div>
-            <p class="eyebrow-especie mt-5 font-dato text-spec-sm uppercase text-verde-monte">
-              {especie.dato_dominante.valor}
-            </p>
-            <h3 class="mt-2 text-display-2 ancho-expandido text-verde-tinta">{especie.nombre}</h3>
-            <p class="mt-3 flex-1 text-sm text-verde-tinta">{especie.resumen}</p>
-            <span class="mt-5 font-dato text-spec-sm uppercase text-ocote-tinta underline underline-offset-4">
-              Ver ficha
-              <span class="flecha" aria-hidden="true">
-                &rarr;
-              </span>
-            </span>
-          </a>
-        ))
-      }
+    {/*
+      Velo en degradado, no plano. Al 80% parejo la foto desaparecía y el héroe
+      se veía como un bloque verde liso.
+
+      Va opaco abajo, que es donde se apoya el texto, y se abre hacia arriba
+      para que se lea la madera. No es decoración: sin él, texto claro sobre una
+      foto no llega al contraste mínimo, y la foto además va a cambiar.
+    */}
+    <div
+      class="absolute inset-0 -z-10 bg-gradient-to-t from-verde-tinta via-verde-tinta/85 to-verde-tinta/35"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="plano pb-16 pt-28 lg:pb-24 lg:pt-40">
+      <h1 class="heroe-entra text-display-hero text-cal">Maderas de Honduras</h1>
+
+      <p class="heroe-entra mt-6 max-w-medida text-lead text-aserrin" style="--retraso: 110ms">
+        Aserradero y planta procesadora. Cortamos pino, roble, caoba y cedro para tu
+        obra, y los secamos, cepillamos y curamos en la misma planta. {NOTA_VOLUMEN}.
+      </p>
+
+      <div class="heroe-entra mt-9 flex flex-wrap gap-3" style="--retraso: 220ms">
+        <a href="/productos" class="boton-cotizar">
+          Ver productos
+          <span class="flecha" aria-hidden="true">&rarr;</span>
+        </a>
+        <a href="/contacto" class="boton-linea-claro">Pedir precio</a>
+      </div>
     </div>
   </section>
 
-  <!-- 4. Capacidad de procesamiento -->
-  <section class="border-y-hair border-verde-musgo/40 bg-aserrin py-20 lg:py-28">
-    <div class="plano">
-      <TituloSeccion rotulo="Capacidad">
-        Tenemos planta, no bodega
-        <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
-          Un revendedor te entrega lo que le llegó. Nosotros cortamos, secamos, cepillamos y curamos
-          acá mismo, así que la pieza sale como la pediste.
-        </p>
-      </TituloSeccion>
+  <!-- Productos · cal -->
+  <section class="bg-cal">
+    <div class="plano py-14 lg:py-20">
+      <h2 class="revelar rotulo">Productos</h2>
 
-      <dl class="mt-12 border-t-hair border-verde-monte">
+      <ul class="collage mt-8 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
         {
-          servicios.map((servicio) => (
-            <div class="grid gap-x-8 gap-y-2 border-b-hair border-verde-monte/40 py-6 lg:grid-cols-[16rem_1fr_18rem]">
-              <dt class="text-display-2 ancho-normal text-verde-tinta">{servicio.nombre}</dt>
-              <dd class="max-w-medida text-base text-verde-tinta">{servicio.que_hace}</dd>
-              <dd class="font-dato text-dato-sm uppercase text-verde-monte lg:text-right">
-                {servicio.especificacion}
-              </dd>
-            </div>
+          productosDestacados.map((producto, i) => (
+            <li class="tarjeta revelar" style={`--retraso: ${i * 100}ms`}>
+              <div class="marco-especie">
+                <MarcadorFoto foto={producto.foto} tono="monte" proporcion="3/2" />
+              </div>
+              <p class="mt-4 text-display-2 text-verde-tinta">{producto.nombre}</p>
+              <p class="mt-1.5 text-sm text-verde-monte">
+                {producto.especies.map(nombreEspecie).filter(Boolean).join(' · ')}
+              </p>
+            </li>
           ))
         }
-      </dl>
+      </ul>
+
+      <a href="/productos" class="boton-cotizar mt-12">
+        Ver todos los productos
+        <span class="flecha" aria-hidden="true">&rarr;</span>
+      </a>
     </div>
   </section>
 
-  <!-- El divisor único del sitio -->
-  <div class="py-12 lg:py-16">
-    <DivisorEstrellas />
-  </div>
-
-  <!-- 5. Para quién es esto -->
-  <section class="plano pb-20 lg:pb-28">
-    <TituloSeccion rotulo="Clientes">
-      Para quién es esto
-      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
-        Vendemos por volumen. Si estás buscando cinco reglas para un arreglo en casa, no somos tu
-        proveedor; si comprás por camionada, sí.
-      </p>
-    </TituloSeccion>
-
-    <dl class="mt-12 border-t-hair border-verde-tinta">
-      {
-        perfiles.map((perfil) => (
-          <div class="grid gap-x-8 gap-y-1 border-b-hair border-verde-musgo/50 py-6 lg:grid-cols-[16rem_1fr]">
-            <dt class="font-dato text-spec uppercase text-verde-monte">{perfil.nombre}</dt>
-            <dd class="max-w-medida text-base text-verde-tinta">{perfil.razon}</dd>
-          </div>
-        ))
-      }
-    </dl>
-  </section>
-
-  <!-- 6. Historia comprimida -->
-  <section class="bg-verde-tinta py-20 lg:py-28">
-    <div class="plano">
-      <TituloSeccion rotulo="Trayectoria" variante="claro">
-        De revender a procesar
-      </TituloSeccion>
-
-      <ol class="mt-12 grid gap-8 border-t-hair border-verde-musgo pt-8 lg:grid-cols-3">
-        <li>
-          <h3 class="font-dato text-spec uppercase text-aserrin">Primero</h3>
-          <p class="mt-3 max-w-medida text-base text-cal">
-            Empezamos revendiendo madera. Comprábamos a otros y entregábamos.
-          </p>
-        </li>
-        <li>
-          <h3 class="font-dato text-spec uppercase text-aserrin">Después</h3>
-          <p class="mt-3 max-w-medida text-base text-cal">
-            Alquilamos locales con maquinaria para poder procesar nosotros mismos.
-          </p>
-        </li>
-        <li>
-          <h3 class="font-dato text-spec uppercase text-aserrin">Desde {ANIO_PLANTA_PROPIA}</h3>
-          <p class="mt-3 max-w-medida text-base text-cal">
-            Planta procesadora propia. Aserramos, dimensionamos, secamos y despachamos con nuestro
-            transporte.
-          </p>
-        </li>
-      </ol>
-
-      <p class="mt-10">
-        <a href="/nosotros" class="boton-linea-claro">
-          Ver la planta
+  <!-- Nosotros · aserrín -->
+  <section class="bg-aserrin">
+    <div class="plano grid gap-10 py-14 lg:grid-cols-2 lg:items-center lg:gap-14 lg:py-20">
+      <div>
+        <h2 class="revelar rotulo">Nosotros</h2>
+        <p class="mt-6 max-w-medida text-lead text-verde-tinta">
+          Planta propia desde {ANIO_PLANTA_PROPIA}. Aserramos, dimensionamos, secamos, cepillamos y
+          curamos en el mismo lugar, y por eso la pieza sale como la pediste y no como había.
+        </p>
+        <a href="/nosotros" class="boton-linea mt-8">
+          Conocenos
           <span class="flecha" aria-hidden="true">&rarr;</span>
         </a>
-      </p>
+      </div>
+      <div>
+        <MarcadorFoto foto={fotoPlanta} tono="monte" proporcion="3/2" />
+      </div>
     </div>
   </section>
 
-  <!-- 7. Cómo se compra. Los marcadores numerados sí van: es una secuencia. -->
-  <section class="plano py-20 lg:py-28">
-    <TituloSeccion rotulo="Compra">Cómo se compra</TituloSeccion>
+  <!-- Servicios · verde tinta -->
+  <section class="bg-verde-tinta text-cal">
+    <div class="plano py-14 lg:py-20">
+      <div class="flex flex-wrap items-baseline justify-between gap-4">
+        <h2 class="revelar rotulo-claro">Servicios</h2>
+        <a href="/servicios" class="enlace-claro -my-2 inline-flex min-h-[44px] items-center text-sm">Ver los servicios</a>
+      </div>
 
-    <ol class="mt-12 grid gap-8 lg:grid-cols-3 lg:gap-12">
-      {
-        PASOS_COMPRA.map((paso) => (
-          <li class="border-t-[3px] border-verde-tinta pt-5">
-            <span class="font-dato text-dato-xl text-ocote-tinta">{paso.numero}</span>
-            <h3 class="mt-3 text-display-2 ancho-normal text-verde-tinta">{paso.titulo}</h3>
-            <p class="mt-3 max-w-medida text-base text-verde-tinta">{paso.texto}</p>
-          </li>
-        ))
-      }
-    </ol>
+      <ul class="collage mt-8 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          servicios.map((servicio, i) => (
+            <li class="tarjeta revelar" style={`--retraso: ${i * 100}ms`}>
+              <div class="marco-especie">
+                <MarcadorFoto foto={servicio.foto} tono="tinta" proporcion="3/2" />
+              </div>
+              <p class="mt-4 text-display-2 text-cal">{servicio.nombre}</p>
+              <p class="mt-1.5 text-sm text-aserrin">{servicio.especificacion}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </section>
 
-  <!-- 8. Cierre a cotización -->
-  <section class="bg-verde-monte py-20 lg:py-24">
-    <div class="plano flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+  <!-- Especies · cal -->
+  <section class="bg-cal">
+    <div class="plano py-14 lg:py-20">
+      <h2 class="revelar rotulo">Especies</h2>
+      <ul class="collage mt-8 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          especies.map((especie, i) => (
+            <li class="tarjeta revelar" style={`--retraso: ${i * 100}ms`}>
+              <div class="marco-especie">
+                <MarcadorFoto foto={especie.foto} tono="monte" proporcion="3/2" />
+              </div>
+              <p class="mt-4 text-display-2 text-verde-tinta">{especie.nombre}</p>
+              <p class="mt-1.5 text-sm text-verde-monte">
+                {especie.acabados.map((a) => ETIQUETA_ACABADO[a]).join(' · ')}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Ubicación · aserrín -->
+  <section class="bg-aserrin">
+    <div class="plano grid gap-10 py-14 lg:grid-cols-2 lg:gap-14 lg:py-20">
       <div>
-        <h2 class="revelar-titular max-w-[18ch] text-display-1 ancho-expandido text-cal">
-          Pasanos las medidas y te damos precio
-        </h2>
-        <div class="mt-5">
-          <ResumenCierre client:visible />
+        <h2 class="revelar rotulo">Ubicación</h2>
+        <p class="mt-4 max-w-medida text-base text-verde-tinta">{DIRECCION.linea}</p>
+
+        <ul class="mt-5 space-y-1">
+          {
+            TELEFONOS.map((telefono) => (
+              <li>
+                <a
+                  href={urlTelefono(telefono)}
+                  class="-my-1 inline-flex min-h-[44px] items-center text-dato-lg text-verde-tinta transition-colors duration-micro ease-sierra hover:text-ocote-tinta"
+                >
+                  {telefono}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <h3 class="rotulo mt-10">Horario</h3>
+        <ul class="mt-4 max-w-medida space-y-2">
+          {
+            HORARIO.map((franja) => (
+              <li class="flex flex-wrap justify-between gap-x-4 text-base">
+                <span class="text-verde-monte">{franja.dias}</span>
+                <span class="text-dato-sm text-verde-tinta">
+                  {franja.abre === null ? 'Cerrado' : `${franja.abre} – ${franja.cierra}`}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={urlComoLlegar()} target="_blank" rel="noopener noreferrer" class="boton-cotizar">
+            Cómo llegar
+            <span class="flecha" aria-hidden="true">&rarr;</span>
+          </a>
+          <a href="/contacto" class="boton-linea">Pedir precio</a>
         </div>
       </div>
-      <div class="flex flex-wrap gap-3">
-        <a href="/cotizar" class="boton-cotizar">
-          Pedir cotización
-          <span class="flecha" aria-hidden="true">&rarr;</span>
-        </a>
-        <a href="/contacto" class="boton-linea-claro">Ver teléfonos y horario</a>
+
+      {/*
+        Mapa incrustado desde el pin que pasó el cliente. `output=embed` no pide
+        clave de API. Va diferido: es un iframe a Google y no tiene por qué
+        cargar antes que el contenido propio.
+      */}
+      <div class="aspect-[4/3] w-full lg:aspect-auto lg:min-h-[26rem]">
+        <iframe
+          src={urlMapaIncrustado()}
+          title="Mapa con la ubicación de la planta de Maderas de Honduras"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          class="h-full w-full"></iframe>
       </div>
     </div>
   </section>
 </Base>
+
+<style>
+  /* Si el visitante pidió no ver movimiento, el video se congela en su póster. */
+  @media (prefers-reduced-motion: reduce) {
+    .heroe-fondo {
+      display: none;
+    }
+  }
+</style>

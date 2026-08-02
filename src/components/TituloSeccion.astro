@@ -36,7 +36,7 @@ const colorCinta = variante === 'claro' ? 'opacity-25' : 'opacity-35';
     <p class:list={['font-dato text-spec-sm uppercase lg:hidden', colorRotulo]}>
       {numero ? `${numero} · ${rotulo}` : rotulo}
     </p>
-    <Titular id={id} class:list={['revelar-titular mt-3 text-display-1 ancho-expandido lg:mt-0', colorTitular]}>
+    <Titular id={id} class:list={['revelar-titular mt-3 text-display-1 lg:mt-0', colorTitular]}>
       <slot />
     </Titular>
     <div class="mt-6">

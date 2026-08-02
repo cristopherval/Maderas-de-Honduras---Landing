@@ -1,139 +1,80 @@
 ---
 import Base from '@/layouts/Base.astro';
-import TituloSeccion from '@/components/TituloSeccion.astro';
-import {
-  DIRECCION,
-  EMAIL_CONTACTO,
-  HORARIO,
-  MAPA_LAT,
-  MAPA_LNG,
-  MINIMO_ENVIO_PT,
-  TELEFONOS,
-  urlComoLlegar,
-  urlTelefono,
-} from '@/data/empresa';
-import { formatearPT } from '@/lib/piesTablares';
-
-const hayCoordenadas = MAPA_LAT !== null && MAPA_LNG !== null;
+import FormularioContacto from '@/components/isla/FormularioContacto';
+import { DIRECCION, HORARIO, NOTA_VOLUMEN, TELEFONOS, urlComoLlegar, urlTelefono } from '@/data/empresa';
 ---
 
 <Base
   titulo="Contacto"
-  descripcion={`Planta en ${DIRECCION.linea}. Teléfonos ${TELEFONOS.join(' y ')}. Lunes a viernes de 7:00 a.m. a 5:00 p.m., sábados de 7:00 a.m. a 12:00 m.`}
+  descripcion="Km 60, carretera a Olancho. Teléfonos, horario de planta y formulario para pedir precio."
   contexto={{ tipo: 'contacto' }}
 >
-  <section class="plano pb-12 pt-12 lg:pt-16">
-    <TituloSeccion rotulo="Contacto" nivel="h1">
-      Dónde estamos y a qué hora
-      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
-        La planta se puede visitar en horario de trabajo. Si venís a ver madera, avisá antes por
-        teléfono para tenerla a la vista.
-      </p>
-    </TituloSeccion>
+  <section class="bg-cal">
+    <div class="plano pb-10 pt-14 lg:pt-20">
+    <h1 class="revelar max-w-[20ch] text-display-hero text-verde-tinta">Pedir precio</h1>
+    <p class="revelar mt-6 max-w-medida text-lead text-verde-tinta" style="--retraso: 90ms">
+      Los precios salen según volumen, especie y acabado, así que no están publicados. Contanos
+      qué necesitás y te decimos. {NOTA_VOLUMEN}.
+    </p>
+    </div>
   </section>
 
-  <section class="plano grid gap-12 pb-20 lg:grid-cols-2 lg:gap-16 lg:pb-28">
-    <div>
-      <h2 class="rotulo">Planta</h2>
-      <address class="mt-4 not-italic">
-        <p class="max-w-medida text-lead text-verde-tinta">{DIRECCION.linea}</p>
-        <p class="mt-2 font-dato text-dato-sm uppercase text-verde-monte">
-          {DIRECCION.departamento}, {DIRECCION.pais}
-        </p>
-      </address>
+  <section class="bg-aserrin">
+    <div class="plano grid gap-12 py-10 lg:grid-cols-2 lg:gap-16 lg:py-14">
+      <div>
+        <h2 class="revelar rotulo">Contanos qué necesitás</h2>
+        <div class="mt-6">
+          <FormularioContacto client:load />
+        </div>
+      </div>
 
-      {
-        /* Mientras MAPA_LAT y MAPA_LNG sean null no se dibuja mapa ni se inventan
-           coordenadas: se muestra la dirección escrita y una búsqueda en Maps. */
-        hayCoordenadas ? (
-          <p class="mt-6 font-dato text-dato-sm text-verde-monte">
-            {MAPA_LAT}, {MAPA_LNG}
+      <div>
+        <h2 class="revelar rotulo">Planta</h2>
+        <address class="mt-4 not-italic">
+          <p class="max-w-medida text-base text-verde-tinta">{DIRECCION.linea}</p>
+          <p class="mt-1 text-sm text-verde-monte">
+            {DIRECCION.departamento}, {DIRECCION.pais}
           </p>
-        ) : (
-          <p class="mt-6 border-hair border-verde-musgo bg-aserrin p-4 font-dato text-dato-sm text-verde-tinta">
-            El punto exacto en el mapa está pendiente de confirmar. Mientras tanto, el botón abre la
-            búsqueda de la dirección en Google Maps.
-          </p>
-        )
-      }
-
-      <a href={urlComoLlegar()} target="_blank" rel="noopener noreferrer" class="boton-cotizar mt-6">
-        Cómo llegar
-        <span class="flecha" aria-hidden="true">&rarr;</span>
-      </a>
-
-      <h2 class="rotulo mt-14">Teléfonos</h2>
-      <ul class="mt-4 border-t-hair border-verde-tinta">
-        {
-          TELEFONOS.map((telefono) => (
-            <li class="border-b-hair border-verde-musgo/50">
-              <a
-                href={urlTelefono(telefono)}
-                class="flex items-baseline justify-between gap-4 py-3 hover:text-verde-monte"
-              >
-                <span class="font-dato text-dato-lg text-verde-tinta">{telefono}</span>
-                <span class="font-dato text-spec-sm uppercase text-ocote-tinta">Llamar</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-
-      {
-        /* EMAIL_CONTACTO es null: no se pinta ninguna referencia a correo. */
-        EMAIL_CONTACTO !== null && (
-          <p class="mt-4">
-            <a href={`mailto:${EMAIL_CONTACTO}`} class="enlace text-base">
-              {EMAIL_CONTACTO}
-            </a>
-          </p>
-        )
-      }
-    </div>
-
-    <div>
-      <h2 class="rotulo">Horario</h2>
-      <ul class="mt-4 border-t-hair border-verde-tinta">
-        {
-          HORARIO.map((franja) => (
-            <li class="flex flex-wrap items-baseline justify-between gap-4 border-b-hair border-verde-musgo/50 py-3">
-              <span class="text-base text-verde-tinta">{franja.dias}</span>
-              <span class="font-dato text-dato text-verde-tinta">
-                {franja.abre === null ? 'Cerrado' : `${franja.abre} – ${franja.cierra}`}
-              </span>
-            </li>
-          ))
-        }
-      </ul>
-
-      <div class="mt-10 border-hair border-verde-tinta bg-verde-tinta p-6">
-        <h2 class="rotulo-claro">Antes de escribir</h2>
-        <dl class="mt-4 space-y-4">
-          <div>
-            <dt class="font-dato text-dato-sm uppercase text-aserrin">Mínimo por envío</dt>
-            <dd class="mt-1 text-base text-cal">
-              {formatearPT(MINIMO_ENVIO_PT)} pies tablares con transporte propio. Por debajo de eso
-              se retira en planta.
-            </dd>
-          </div>
-          <div>
-            <dt class="font-dato text-dato-sm uppercase text-aserrin">Precios</dt>
-            <dd class="mt-1 text-base text-cal">
-              No se publican. Cada cotización sale según volumen, especie y acabado.
-            </dd>
-          </div>
-          <div>
-            <dt class="font-dato text-dato-sm uppercase text-aserrin">Qué mandar</dt>
-            <dd class="mt-1 text-base text-cal">
-              Especie, espesor, ancho, largo, piezas y acabado. Si traés plano, mandá la lista de
-              despiece.
-            </dd>
-          </div>
-        </dl>
-        <a href="/cotizar" class="boton-cotizar mt-6">
-          Pedir cotización
+        </address>
+        <a
+          href={urlComoLlegar()}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="boton-linea mt-6"
+        >
+          Cómo llegar
           <span class="flecha" aria-hidden="true">&rarr;</span>
         </a>
+
+        <h2 class="revelar rotulo mt-12">Teléfonos</h2>
+        <ul class="mt-4">
+          {
+            TELEFONOS.map((telefono) => (
+              <li class="py-2">
+                <a
+                  href={urlTelefono(telefono)}
+                  class="-my-1 inline-flex min-h-[44px] items-center text-dato-lg text-verde-tinta transition-colors duration-micro ease-sierra hover:text-ocote-tinta"
+                >
+                  {telefono}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <h2 class="revelar rotulo mt-12">Horario</h2>
+        <ul class="mt-4">
+          {
+            HORARIO.map((franja) => (
+              <li class="flex flex-wrap justify-between gap-x-4 py-1.5 text-base">
+                <span class="text-verde-monte">{franja.dias}</span>
+                <span class="text-dato-sm text-verde-tinta">
+                  {franja.abre === null ? 'Cerrado' : `${franja.abre} – ${franja.cierra}`}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </div>
   </section>

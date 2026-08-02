@@ -1,13 +1,10 @@
 ---
 import Base from '@/layouts/Base.astro';
-import { obtenerEspecies } from '@/lib/contenido';
-
-const especies = await obtenerEspecies();
 
 const DESTINOS = [
-  { href: '/especies', texto: 'Especies', detalle: 'Pino, roble, caoba y cedro' },
-  { href: '/productos', texto: 'Productos', detalle: 'Los 11 productos y los 4 servicios' },
-  { href: '/proceso', texto: 'Proceso', detalle: 'De la troza al despacho' },
+  { href: '/productos', texto: 'Productos', detalle: 'Pino, roble, caoba y cedro' },
+  { href: '/servicios', texto: 'Servicios', detalle: 'Corte, secado, cepillado y curado' },
+  { href: '/nosotros', texto: 'Nosotros', detalle: 'La planta' },
   { href: '/contacto', texto: 'Contacto', detalle: 'Dirección, teléfonos y horario' },
 ];
 ---
@@ -20,9 +17,7 @@ const DESTINOS = [
 >
   <section class="plano py-20 lg:py-32">
     <p class="rotulo">Error 404</p>
-    <h1 class="mt-5 max-w-[18ch] text-display-hero ancho-expandido text-verde-tinta">
-      Esta página no existe
-    </h1>
+    <h1 class="revelar mt-5 max-w-[18ch] text-display-hero text-verde-tinta">Esta página no existe</h1>
     <p class="mt-8 max-w-medida text-lead text-verde-tinta">
       O se movió, o el enlace venía mal escrito. Lo que sí existe está acá abajo.
     </p>
@@ -30,27 +25,12 @@ const DESTINOS = [
     <ul class="mt-12 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
       {
         DESTINOS.map((destino) => (
-          <li class="border-t-hair border-verde-tinta pt-4">
+          <li class="">
             <a href={destino.href} class="group block">
-              <span class="text-display-2 ancho-normal text-verde-tinta group-hover:text-verde-monte">
+              <span class="text-display-2 text-verde-tinta group-hover:text-verde-monte">
                 {destino.texto}
               </span>
-              <span class="mt-1 block font-dato text-dato-sm text-verde-monte">
-                {destino.detalle}
-              </span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-
-    <h2 class="rotulo mt-16">Fichas de especie</h2>
-    <ul class="mt-4 flex flex-wrap gap-3">
-      {
-        especies.map((especie) => (
-          <li>
-            <a href={`/especies/${especie.slug}`} class="boton-linea">
-              {especie.nombre}
+              <span class="mt-1 block text-dato-sm text-verde-monte">{destino.detalle}</span>
             </a>
           </li>
         ))
@@ -58,8 +38,8 @@ const DESTINOS = [
     </ul>
 
     <p class="mt-12">
-      <a href="/cotizar" class="boton-cotizar">
-        Pedir cotización
+      <a href="/contacto" class="boton-cotizar">
+        Pedir precio
         <span class="flecha" aria-hidden="true">&rarr;</span>
       </a>
     </p>

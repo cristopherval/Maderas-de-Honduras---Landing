@@ -5,8 +5,19 @@
     "categoria": "construccion",
     "que_es": "Tabla aserrada para obra gruesa: encofrado, formaleta, andamio y cerramiento provisional. Se corta al espesor y largo que traiga el plano.",
     "unidad": "pie tablar",
-    "especies": ["pino", "roble", "caoba", "cedro"],
-    "orden": 1
+    "especies": [
+      "pino",
+      "roble",
+      "caoba",
+      "cedro"
+    ],
+    "orden": 1,
+    "foto": {
+      "toma": "Foto de tabla para construcción en la planta",
+      "alt": "Tabla para construcción, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "tabla-construccion.jpg"
+    }
   },
   {
     "id": "madera-en-cuadro",
@@ -14,8 +25,19 @@
     "categoria": "construccion",
     "que_es": "Piezas de sección cuadrada o rectangular para estructura: columnas, clavadores, reglas y armado de techo.",
     "unidad": "pie tablar",
-    "especies": ["pino", "roble", "caoba", "cedro"],
-    "orden": 2
+    "especies": [
+      "pino",
+      "roble",
+      "caoba",
+      "cedro"
+    ],
+    "orden": 2,
+    "foto": {
+      "toma": "Foto de madera en cuadro en la planta",
+      "alt": "Madera en cuadro, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "madera-en-cuadro.jpg"
+    }
   },
   {
     "id": "timber",
@@ -23,8 +45,17 @@
     "categoria": "construccion",
     "que_es": "Escuadría gruesa para vigas y elementos que cargan. Sale dimensionada de la planta, no hay que reaserrarla en obra.",
     "unidad": "pie tablar",
-    "especies": ["pino", "roble"],
-    "orden": 3
+    "especies": [
+      "pino",
+      "roble"
+    ],
+    "orden": 3,
+    "foto": {
+      "toma": "Foto de timber en la planta",
+      "alt": "Timber, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "timber.jpg"
+    }
   },
   {
     "id": "machimbre",
@@ -32,18 +63,36 @@
     "categoria": "construccion",
     "que_es": "Tabla con lengüeta y ranura para cielo raso, forro de pared y entrepiso. Se entrega cepillada y lista para clavar.",
     "unidad": "pie tablar",
-    "especies": ["pino", "roble", "caoba", "cedro"],
-    "orden": 4
+    "especies": [
+      "pino",
+      "roble",
+      "caoba",
+      "cedro"
+    ],
+    "orden": 4,
+    "foto": {
+      "toma": "Foto de machimbre en la planta",
+      "alt": "Machimbre, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "machimbre.jpg"
+    }
   },
-
   {
     "id": "pallets",
     "nombre": "Pallets",
     "categoria": "industria",
-    "que_es": "Tarimas armadas para bodega y despacho. Se hacen a la medida que ocupe la carga.",
+    "que_es": "Tarimas armadas para bodega y despacho. Se hacen según lo que ocupe la carga.",
     "unidad": "unidad",
-    "especies": ["pino"],
-    "orden": 5
+    "especies": [
+      "pino"
+    ],
+    "orden": 5,
+    "foto": {
+      "toma": "Foto de pallets en la planta",
+      "alt": "Pallets, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "pallets.jpg"
+    }
   },
   {
     "id": "palillo",
@@ -51,8 +100,16 @@
     "categoria": "industria",
     "que_es": "Listón delgado para separación de estibas, refuerzo de embalaje y armado de cajas.",
     "unidad": "unidad",
-    "especies": ["pino"],
-    "orden": 6
+    "especies": [
+      "pino"
+    ],
+    "orden": 6,
+    "foto": {
+      "toma": "Foto de palillo en la planta",
+      "alt": "Palillo, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "palillo.jpg"
+    }
   },
   {
     "id": "bolillos",
@@ -60,8 +117,16 @@
     "categoria": "industria",
     "que_es": "Piezas rollizas para puntal, apuntalamiento y armado provisional en obra.",
     "unidad": "unidad",
-    "especies": ["pino"],
-    "orden": 7
+    "especies": [
+      "pino"
+    ],
+    "orden": 7,
+    "foto": {
+      "toma": "Foto de bolillos en la planta",
+      "alt": "Bolillos, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "bolillos.jpg"
+    }
   },
   {
     "id": "capote",
@@ -69,18 +134,34 @@
     "categoria": "industria",
     "que_es": "El costanero que sale al escuadrar la troza. Sirve para cerco, encofrado sacrificable y trabajo provisional.",
     "unidad": null,
-    "especies": ["pino"],
-    "orden": 8
+    "especies": [
+      "pino"
+    ],
+    "orden": 8,
+    "foto": {
+      "toma": "Foto de capote en la planta",
+      "alt": "Capote, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "capote.jpg"
+    }
   },
-
   {
     "id": "lena",
     "nombre": "Leña",
     "categoria": "combustible",
     "que_es": "Recorte y desperdicio de aserrío listo para quemar. Va a hornos de pan, caleras, beneficios de café y cocinas.",
     "unidad": null,
-    "especies": ["pino", "roble"],
-    "orden": 9
+    "especies": [
+      "pino",
+      "roble"
+    ],
+    "orden": 9,
+    "foto": {
+      "toma": "Foto de leña en la planta",
+      "alt": "Leña, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "lena.jpg"
+    }
   },
   {
     "id": "ocote",
@@ -88,8 +169,16 @@
     "categoria": "combustible",
     "que_es": "Astilla de pino con resina, para encender. Prende con un fósforo y no necesita nada más.",
     "unidad": null,
-    "especies": ["pino"],
-    "orden": 10
+    "especies": [
+      "pino"
+    ],
+    "orden": 10,
+    "foto": {
+      "toma": "Foto de ocote en la planta",
+      "alt": "Ocote, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "ocote.jpg"
+    }
   },
   {
     "id": "aserrin",
@@ -97,7 +186,18 @@
     "categoria": "combustible",
     "que_es": "Subproducto del aserrío y del cepillado. Se usa en camas de granja, absorbentes y combustible de biomasa.",
     "unidad": null,
-    "especies": ["pino", "roble", "caoba", "cedro"],
-    "orden": 11
+    "especies": [
+      "pino",
+      "roble",
+      "caoba",
+      "cedro"
+    ],
+    "orden": 11,
+    "foto": {
+      "toma": "Foto de aserrín en la planta",
+      "alt": "Aserrín, producto de Maderas de Honduras",
+      "proporcion": "3/2",
+      "archivo": "aserrin.jpg"
+    }
   }
 ]

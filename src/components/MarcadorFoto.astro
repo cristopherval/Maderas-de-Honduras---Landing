@@ -14,7 +14,7 @@ import type { MarcadorFoto, ProporcionFoto } from '@/types/contenido';
 interface Props {
   foto: MarcadorFoto;
   /** Fondo del marcador. Solo tonos de la paleta. */
-  tono?: 'monte' | 'tinta' | 'musgo' | 'aserrin';
+  tono?: 'monte' | 'tinta' | 'aserrin';
   /** La primera imagen visible de una página no se difiere. */
   prioritaria?: boolean;
   /**
@@ -47,10 +47,14 @@ const CLASE_PROPORCION: Record<ProporcionFoto, string> = {
 
 // El tono `aserrin` lleva borde: sin él se pierde contra el fondo `cal` y el
 // marcador se lee como un hueco en la maqueta en vez de como un bloque.
+//
+// Eran cuatro. El tono `musgo` se cayó porque ningún color de la paleta llega a
+// 4.5:1 sobre #47825E — el mejor es `cal`, con 4.24 — y el marcador lleva dos
+// líneas de texto encima. Es la misma razón por la que `verde-musgo` está
+// prohibido como texto: no da contraste ni de un lado ni del otro.
 const CLASE_TONO = {
   monte: 'bg-verde-monte text-aserrin',
   tinta: 'bg-verde-tinta text-aserrin',
-  musgo: 'bg-verde-musgo text-verde-tinta',
   aserrin: 'bg-aserrin text-verde-monte border-hair border-verde-monte',
 } as const;
 
@@ -84,7 +88,9 @@ const imagen = cargador ? (await cargador()).default : undefined;
         clase,
       ]}
     >
-      <span class="font-dato text-spec-sm uppercase opacity-70">Foto pendiente</span>
+      {/* Sin opacidad: al 70% el rótulo caía a 2.3:1 contra su propio fondo.
+          La jerarquía la da el tamaño, no la transparencia. */}
+      <span class="font-dato text-spec-sm uppercase">Foto pendiente</span>
       <span class="font-dato text-dato-sm leading-snug">{foto.toma}</span>
     </div>
   )

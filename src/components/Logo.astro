@@ -12,64 +12,60 @@ interface Props {
 const { variante = 'oscuro', conNombre = true, tamano = 36 } = Astro.props;
 
 const colorPino = variante === 'claro' ? '#F8F7F3' : '#1C4B34';
-const colorEstrella = variante === 'claro' ? '#1C4B34' : '#F8F7F3';
 const colorTexto = variante === 'claro' ? 'text-cal' : 'text-verde-tinta';
 
-// TODO: sustituir por el trazado del logo real cuando el cliente lo entregue.
-// Sin `<use>` ni `id` a propósito: el logo aparece en el encabezado y en el pie
-// de la misma página, y los identificadores repetidos rompen el documento.
-const CUERPOS_PINO = [
-  'M0,-34 L9,-14 L-9,-14 Z',
-  'M0,-24 L14,0 L-14,0 Z',
-  'M0,-10 L17,18 L-17,18 Z',
-  'M-2.5,18 h5 v8 h-5 Z',
-];
-
-const PINOS = [
-  'translate(26 63.7) scale(0.78)',
-  'translate(94 63.7) scale(0.78)',
-  'translate(60 58)',
-];
-
-const ESTRELLA =
-  'M0,-1 L0.225,-0.309 L0.951,-0.309 L0.363,0.118 L0.588,0.809 ' +
-  'L0,0.382 L-0.588,0.809 L-0.363,0.118 L-0.951,-0.309 L-0.225,-0.309 Z';
+/**
+ * Logo real del cliente, vectorizado desde LOGO AZUR.jpeg.
+ *
+ * No está dibujado a mano: el archivo es de dos colores planos y bordes rectos,
+ * así que se trazó por contorno (seguimiento de Moore + Douglas-Peucker) y las
+ * cinco estrellas se ajustaron a su geometría exacta, porque el umbral sobre el
+ * antialias del JPEG dejaba las puntas romas. De ahí salen los 21 vértices de
+ * la silueta y los 10 de cada estrella.
+ *
+ * Si algún día llega el vectorial original del diseñador, se reemplazan estas
+ * dos constantes y nada más.
+ *
+ * Las estrellas son huecos, no figuras blancas encima: con `evenodd` dejan
+ * pasar el fondo que haya detrás, así que el logo sirve sobre cualquier color.
+ * Acá `evenodd` sí vale —al revés que con tres pinos superpuestos— porque el
+ * trazado tiene una sola silueta exterior y cinco huecos que no se tocan.
+ */
+const SILUETA =
+  'M60.10,0.00 L77.24,33.52 L87.64,15.79 L107.29,49.89 L107.29,50.27 L101.51,50.47 ' +
+  'L115.76,72.23 L104.01,72.23 L103.63,72.62 L120.00,98.81 L0.00,98.81 L16.37,72.81 ' +
+  'L16.18,72.42 L4.24,72.42 L18.68,50.47 L12.71,50.27 L31.97,16.76 L32.55,15.99 ' +
+  'L33.13,16.76 L42.95,33.52 L60.10,0.19 Z';
 
 const ESTRELLAS = [
-  'translate(60 66) scale(4)',
-  'translate(52 58) scale(3.6)',
-  'translate(68 58) scale(3.6)',
-  'translate(52 74) scale(3.6)',
-  'translate(68 74) scale(3.6)',
-];
+  'M39.42,44.53 L35.46,47.40 L36.97,52.04 L33.02,49.17 L29.07,52.04 L30.58,47.40 L26.63,44.52 L31.51,44.53 L33.03,39.88 L34.53,44.53 Z',
+  'M93.78,44.55 L89.85,47.40 L91.35,52.02 L87.42,49.16 L83.49,52.02 L84.99,47.40 L81.07,44.54 L85.92,44.55 L87.43,39.93 L88.92,44.55 Z',
+  'M71.51,59.97 L64.39,65.15 L67.11,73.52 L59.99,68.35 L52.87,73.52 L55.59,65.15 L48.47,59.98 L57.27,59.97 L59.99,51.60 L62.71,59.97 Z',
+  'M39.44,77.99 L35.47,80.86 L36.97,85.52 L33.02,82.63 L29.05,85.49 L30.57,80.84 L26.62,77.96 L31.52,77.97 L33.04,73.32 L34.54,77.98 Z',
+  'M93.77,77.94 L89.83,80.79 L91.33,85.42 L87.40,82.56 L83.46,85.41 L84.97,80.79 L81.04,77.92 L85.90,77.93 L87.41,73.31 L88.91,77.93 Z',
+].join(' ');
+
+const VB_ANCHO = 120;
+const VB_ALTO = 98.81;
 ---
 
 <span class="inline-flex items-center gap-3">
   <svg
-    viewBox="0 0 120 96"
+    viewBox={`0 0 ${VB_ANCHO} ${VB_ALTO}`}
     width={tamano}
-    height={Math.round((tamano * 96) / 120)}
+    height={Math.round((tamano * VB_ALTO) / VB_ANCHO)}
     role="img"
     aria-label={NOMBRE}
     class="shrink-0"
   >
-    <g fill={colorPino}>
-      {PINOS.map((posicion) => (
-        <g transform={posicion}>
-          {CUERPOS_PINO.map((trazo) => <path d={trazo} />)}
-        </g>
-      ))}
-    </g>
-    <g fill={colorEstrella}>
-      {ESTRELLAS.map((posicion) => <path d={ESTRELLA} transform={posicion} />)}
-    </g>
+    <path d={`${SILUETA} ${ESTRELLAS}`} fill={colorPino} fill-rule="evenodd" />
   </svg>
 
   {
     conNombre && (
       <span
         class:list={[
-          'hidden font-display text-[0.8125rem] font-bold uppercase leading-[1.1] tracking-[0.06em] ancho-expandido sm:block',
+          'hidden text-[0.8125rem] font-bold uppercase leading-[1.1] tracking-[0.06em] sm:block',
           colorTexto,
         ]}
       >

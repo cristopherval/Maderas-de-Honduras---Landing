@@ -32,7 +32,7 @@ const especies = defineCollection({
     acabados: z.array(acabado).min(1),
     productos: z.array(z.string()).min(1),
     dato_dominante: z.object({ etiqueta: z.string(), valor: z.string() }),
-    tono: z.enum(['tinta', 'monte', 'musgo', 'aserrin']),
+    tono: z.enum(['tinta', 'monte', 'aserrin']),
     foto: marcadorFoto,
     orden: z.number().int().positive(),
   }),
@@ -46,6 +46,7 @@ const productos = defineCollection({
     que_es: z.string(),
     unidad: z.string().nullable(),
     especies: z.array(z.string()).min(1),
+    foto: marcadorFoto,
     orden: z.number().int().positive(),
   }),
 });
@@ -56,27 +57,15 @@ const servicios = defineCollection({
     nombre: z.string(),
     que_hace: z.string(),
     especificacion: z.string(),
-    orden: z.number().int().positive(),
-  }),
-});
-
-const proceso = defineCollection({
-  loader: file('src/content/proceso.json'),
-  schema: z.object({
-    nombre: z.string(),
-    descripcion: z.string(),
     foto: marcadorFoto,
     orden: z.number().int().positive(),
   }),
 });
 
-const perfiles = defineCollection({
-  loader: file('src/content/perfiles.json'),
-  schema: z.object({
-    nombre: z.string(),
-    razon: z.string(),
-    orden: z.number().int().positive(),
-  }),
-});
-
-export const collections = { especies, productos, servicios, proceso, perfiles };
+/*
+ * Se quitaron las colecciones `proceso` y `perfiles`. La primera alimentaba la
+ * página de las seis etapas, que ahora es `/servicios` y sale de
+ * servicios.json; la segunda alimentaba "a quién le vendemos". Los JSON siguen
+ * en el historial de git si hicieran falta.
+ */
+export const collections = { especies, productos, servicios };

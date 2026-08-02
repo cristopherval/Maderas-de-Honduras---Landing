@@ -11,7 +11,12 @@
       "machimbre para cielo raso",
       "embalaje y pallets"
     ],
-    "acabados": ["rustica", "cepillada", "secada", "curada"],
+    "acabados": [
+      "rustica",
+      "cepillada",
+      "secada",
+      "curada"
+    ],
     "productos": [
       "tabla-construccion",
       "madera-en-cuadro",
@@ -25,12 +30,16 @@
       "ocote",
       "aserrin"
     ],
-    "dato_dominante": { "etiqueta": "Uso principal", "valor": "Estructura y encofrado" },
+    "dato_dominante": {
+      "etiqueta": "Uso principal",
+      "valor": "Estructura y encofrado"
+    },
     "tono": "monte",
     "foto": {
       "toma": "Pila de tabla de pino recién aserrada, vista de los extremos, luz de mañana",
       "alt": "Pila de tablas de pino recién aserradas apiladas en el patio del aserradero",
-      "proporcion": "16/9"
+      "proporcion": "16/9",
+      "archivo": "pino.jpg"
     },
     "orden": 1
   },
@@ -39,15 +48,34 @@
     "nombre": "Roble",
     "resumen": "Dura y pesada. Donde el pino ya no aguanta.",
     "descripcion": "Más dura y más pesada que el pino, y se nota al clavarla. Se ocupa donde la pieza va a recibir golpe o va a quedar a la vista: pisos, puertas, vigas y muebles de uso rudo. Conviene pedirla secada para que no se mueva después de instalada.",
-    "usos": ["piso de madera", "puertas y marcos", "vigas a la vista", "muebles de uso rudo"],
-    "acabados": ["rustica", "cepillada", "secada", "curada"],
-    "productos": ["tabla-construccion", "madera-en-cuadro", "timber", "machimbre"],
-    "dato_dominante": { "etiqueta": "Uso principal", "valor": "Piso, puerta y viga vista" },
+    "usos": [
+      "piso de madera",
+      "puertas y marcos",
+      "vigas a la vista",
+      "muebles de uso rudo"
+    ],
+    "acabados": [
+      "rustica",
+      "cepillada",
+      "secada",
+      "curada"
+    ],
+    "productos": [
+      "tabla-construccion",
+      "madera-en-cuadro",
+      "timber",
+      "machimbre"
+    ],
+    "dato_dominante": {
+      "etiqueta": "Uso principal",
+      "valor": "Piso, puerta y viga vista"
+    },
     "tono": "tinta",
     "foto": {
       "toma": "Canto de una tabla de roble cepillada, primer plano cerrado para que se lea la veta",
       "alt": "Primer plano del canto de una tabla de roble cepillada mostrando la veta",
-      "proporcion": "3/2"
+      "proporcion": "3/2",
+      "archivo": "roble.jpg"
     },
     "orden": 2
   },
@@ -55,21 +83,33 @@
     "id": "caoba",
     "nombre": "Caoba",
     "resumen": "Madera de acabado. Para lo que queda a la vista.",
-    "descripcion": "Se trabaja limpio, toma bien el barniz y no da problema en el detalle fino, así que va en puertas, muebles y carpintería vista. Se corta a la medida del plano y se entrega cepillada.",
+    "descripcion": "Se trabaja limpio, toma bien el barniz y no da problema en el detalle fino, así que va en puertas, muebles y carpintería vista. Se corta según el plano y se entrega cepillada.",
     "usos": [
       "puertas y ventanería",
       "muebles y ebanistería",
       "molduras y detalles vistos",
       "carpintería de interiores"
     ],
-    "acabados": ["cepillada", "secada", "curada"],
-    "productos": ["tabla-construccion", "madera-en-cuadro", "machimbre"],
-    "dato_dominante": { "etiqueta": "Uso principal", "valor": "Ebanistería y acabado fino" },
+    "acabados": [
+      "cepillada",
+      "secada",
+      "curada"
+    ],
+    "productos": [
+      "tabla-construccion",
+      "madera-en-cuadro",
+      "machimbre"
+    ],
+    "dato_dominante": {
+      "etiqueta": "Uso principal",
+      "valor": "Ebanistería y acabado fino"
+    },
     "tono": "aserrin",
     "foto": {
       "toma": "Tabla de caoba cepillada apoyada de canto contra el banco, luz lateral rasante",
       "alt": "Tabla de caoba cepillada apoyada de canto con luz lateral",
-      "proporcion": "4/5"
+      "proporcion": "4/5",
+      "archivo": "caoba.jpg"
     },
     "orden": 3
   },
@@ -84,14 +124,26 @@
       "muebles livianos",
       "cielos y forros de interior"
     ],
-    "acabados": ["cepillada", "secada", "curada"],
-    "productos": ["tabla-construccion", "madera-en-cuadro", "machimbre"],
-    "dato_dominante": { "etiqueta": "Uso principal", "valor": "Puertas, molduras y closets" },
-    "tono": "musgo",
+    "acabados": [
+      "cepillada",
+      "secada",
+      "curada"
+    ],
+    "productos": [
+      "tabla-construccion",
+      "madera-en-cuadro",
+      "machimbre"
+    ],
+    "dato_dominante": {
+      "etiqueta": "Uso principal",
+      "valor": "Puertas, molduras y closets"
+    },
+    "tono": "monte",
     "foto": {
       "toma": "Paquete de molduras de cedro amarrado, vista de tres cuartos sobre el piso de la planta",
       "alt": "Paquete de molduras de cedro amarrado en el piso de la planta",
-      "proporcion": "1/1"
+      "proporcion": "1/1",
+      "archivo": "cedro.jpg"
     },
     "orden": 4
   }

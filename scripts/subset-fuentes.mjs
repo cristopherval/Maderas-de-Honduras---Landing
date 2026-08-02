@@ -27,30 +27,21 @@ const JUEGO_CARACTERES = [
   '$€₡', // lempira usa L, pero dejamos símbolos de moneda comunes por si acaso
 ].join('');
 
+/**
+ * Una sola familia para todo el sitio: Libre Franklin, del linaje de la Franklin
+ * Gothic, que es la tipografía de los catálogos comerciales. Antes eran tres
+ * (display, cuerpo y una monoespaciada para los datos); la monoespaciada se fue
+ * con la calculadora y el par display/cuerpo se colapsó en esta.
+ *
+ * Un solo archivo variable: una petición en vez de cuatro, y el peso baja de
+ * 64 KB a lo que salga de recortar el eje wght a 400..700.
+ */
 const TRABAJOS = [
   {
-    entrada: '@fontsource-variable/archivo/files/archivo-latin-standard-normal.woff2',
-    salida: 'archivo-latin.woff2',
-    // El display solo se usa en negrita y de ancho normal a expandido. Recortar
-    // los ejes a ese rango quita las interpolaciones que nunca vamos a pedir.
-    ejes: { wght: { min: 600, max: 800 }, wdth: { min: 100, max: 125 } },
-    nota: 'display — wght 600..800, wdth 100..125',
-  },
-  {
-    entrada: '@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2',
-    salida: 'instrument-sans-latin.woff2',
-    ejes: { wght: { min: 400, max: 600 } },
-    nota: 'cuerpo — wght 400..600',
-  },
-  {
-    entrada: '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2',
-    salida: 'ibm-plex-mono-400-latin.woff2',
-    nota: 'datos — regular',
-  },
-  {
-    entrada: '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-600-normal.woff2',
-    salida: 'ibm-plex-mono-600-latin.woff2',
-    nota: 'datos — semibold',
+    entrada: '@fontsource-variable/libre-franklin/files/libre-franklin-latin-wght-normal.woff2',
+    salida: 'libre-franklin-latin.woff2',
+    ejes: { wght: { min: 400, max: 700 } },
+    nota: 'todo el sitio — wght 400..700',
   },
 ];
 

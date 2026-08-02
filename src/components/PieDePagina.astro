@@ -1,47 +1,48 @@
 ---
 import Logo from '@/components/Logo.astro';
+import AyudaWhatsApp from '@/components/AyudaWhatsApp.astro';
 import {
   DIRECCION,
   EMAIL_CONTACTO,
   HORARIO,
-  MINIMO_ENVIO_PT,
+  NOTA_VOLUMEN,
   REDES,
   TELEFONOS,
   urlComoLlegar,
   urlTelefono,
 } from '@/data/empresa';
-import { formatearPT } from '@/lib/piesTablares';
 
 const ENLACES = [
-  { href: '/especies', texto: 'Especies' },
   { href: '/productos', texto: 'Productos' },
-  { href: '/proceso', texto: 'Proceso' },
+  { href: '/servicios', texto: 'Servicios' },
   { href: '/nosotros', texto: 'Nosotros' },
   { href: '/contacto', texto: 'Contacto' },
-  { href: '/cotizar', texto: 'Pedir cotización' },
 ];
 ---
 
-<footer class="border-t-hair border-verde-musgo/40 bg-verde-tinta text-cal">
+<footer class="bg-verde-tinta text-cal">
+  {/* Última puerta abierta antes de que se vayan. */}
+  <div class="plano border-b border-verde-musgo/30 py-12 lg:py-14">
+    <AyudaWhatsApp mensaje="Buenas. Estoy en el sitio y no encuentro lo que busco. ¿Me ayudan?" />
+  </div>
+
   <div class="plano grid gap-12 py-16 lg:grid-cols-[1.2fr_1fr_1fr] lg:gap-8 lg:py-20">
     <div>
       <Logo variante="claro" tamano={44} />
       <p class="mt-6 max-w-medida text-sm text-aserrin">
-        Aserradero y planta procesadora. Despachamos por camionada desde {
-          formatearPT(MINIMO_ENVIO_PT)
-        } pies tablares con transporte propio.
+        Aserradero y planta procesadora. {NOTA_VOLUMEN}.
       </p>
     </div>
 
     <div>
-      <h2 class="rotulo-claro">Planta</h2>
+      <h2 class="rotulo-claro">Ubicación</h2>
       <address class="mt-4 not-italic">
         <p class="max-w-medida text-sm text-cal">{DIRECCION.linea}</p>
         <ul class="mt-4 space-y-1">
           {
             TELEFONOS.map((telefono) => (
               <li>
-                <a href={urlTelefono(telefono)} class="font-dato text-dato text-cal hover:text-ocote">
+                <a href={urlTelefono(telefono)} class="-my-1 inline-flex min-h-[44px] items-center font-dato text-dato text-cal transition-colors duration-micro ease-sierra hover:text-ocote">
                   {telefono}
                 </a>
               </li>
@@ -71,7 +72,7 @@ const ENLACES = [
       <ul class="mt-4 space-y-1">
         {
           HORARIO.map((franja) => (
-            <li class="flex flex-wrap justify-between gap-x-4 border-b-hair border-verde-musgo/40 py-1.5 text-sm">
+            <li class="flex flex-wrap justify-between gap-x-4 py-1 text-sm">
               <span class="text-aserrin">{franja.dias}</span>
               <span class="font-dato text-dato-sm text-cal">
                 {franja.abre === null ? 'Cerrado' : `${franja.abre} – ${franja.cierra}`}
@@ -86,7 +87,7 @@ const ENLACES = [
         {
           ENLACES.map((enlace) => (
             <li>
-              <a href={enlace.href} class="text-sm text-aserrin hover:text-ocote">
+              <a href={enlace.href} class="-my-1 inline-flex min-h-[44px] items-center text-sm text-aserrin transition-colors duration-micro ease-sierra hover:text-ocote">
                 {enlace.texto}
               </a>
             </li>
@@ -115,14 +116,6 @@ const ENLACES = [
     </div>
   </div>
 
-  <div class="border-t-hair border-verde-musgo/40">
-    <div class="plano flex flex-wrap items-center justify-between gap-2 py-5">
-      <p class="font-dato text-spec-sm uppercase text-aserrin">
-        Maderas de Honduras &middot; {DIRECCION.departamento}, {DIRECCION.pais}
-      </p>
-      <p class="font-dato text-spec-sm uppercase text-aserrin">
-        Los precios se cotizan por volumen, especie y acabado
-      </p>
-    </div>
-  </div>
+  {/* La franja inferior con la dirección repetida y el lema en versalitas se
+      quitó: repetía lo que ya está tres columnas más arriba. */}
 </footer>

@@ -1,118 +1,69 @@
 ---
 import Base from '@/layouts/Base.astro';
-import TituloSeccion from '@/components/TituloSeccion.astro';
-import { obtenerEspecies, obtenerServicios, productosPorCategoria } from '@/lib/contenido';
-import { PRODUCTOS_CANTIDAD } from '@/data/empresa';
+import AyudaWhatsApp from '@/components/AyudaWhatsApp.astro';
+import MarcadorFoto from '@/components/MarcadorFoto.astro';
+import { obtenerEspecies, productosPorCategoria } from '@/lib/contenido';
+import { NOTA_VOLUMEN } from '@/data/empresa';
 
+/**
+ * El catálogo. Nombre del producto, en qué especies sale y cómo se vende.
+ *
+ * Nada de párrafos explicando para qué sirve cada cosa: quien busca machimbre
+ * ya sabe qué es el machimbre. Es el criterio de los dos aserraderos que puso
+ * el cliente de referencia.
+ */
 const grupos = await productosPorCategoria();
-const servicios = await obtenerServicios();
 const especies = await obtenerEspecies();
 
-const nombreEspecie = (slug: string): string =>
-  especies.find((especie) => especie.slug === slug)?.nombre ?? slug;
+const nombreEspecie = (slug: string): string | undefined =>
+  especies.find((especie) => especie.slug === slug)?.nombre;
 ---
 
 <Base
   titulo="Productos"
-  descripcion={`Los ${PRODUCTOS_CANTIDAD} productos que salen de la planta, agrupados por caso de uso: construcción, industria y embalaje, combustible y derivados. Más cortes a la medida, secado, cepillado y curado.`}
-  contexto={{ tipo: 'inicio' }}
+  descripcion="Tabla para construcción, madera en cuadro, timber, machimbre, pallets, palillo, bolillos, capote, leña, ocote y aserrín. En pino, roble, caoba y cedro."
+  contexto={{ tipo: 'producto', nombre: 'varios productos' }}
 >
-  <section class="plano pb-16 pt-12 lg:pb-20 lg:pt-16">
-    <TituloSeccion rotulo="Productos" nivel="h1">
-      {PRODUCTOS_CANTIDAD} productos, agrupados por lo que vas a hacer con ellos
-      <p slot="cuerpo" class="max-w-medida text-lead text-verde-tinta">
-        Todo se cotiza por volumen, especie y acabado. Si la medida que ocupás no está en la lista,
-        se corta.
-      </p>
-    </TituloSeccion>
+  <section class="bg-cal">
+    <div class="plano pb-10 pt-14 lg:pt-20">
+    <h1 class="revelar text-display-hero text-verde-tinta">Productos</h1>
+    <p class="revelar mt-6 max-w-medida text-lead text-verde-tinta" style="--retraso: 90ms">
+      Todo sale en pino, roble, caoba o cedro, según el producto. Si no ves lo que ocupás,
+      escribinos y lo resolvemos. {NOTA_VOLUMEN}.
+    </p>
+    </div>
   </section>
 
   {
-    grupos.map((grupo, indice) => (
-      <section
-        class:list={[
-          'border-t-hair border-verde-musgo/40 py-16 lg:py-20',
-          indice % 2 === 1 ? 'bg-aserrin' : 'bg-cal',
-        ]}
-      >
-        <div class="plano">
-          <div class="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
-            <h2 class="revelar-titular text-display-1 ancho-expandido text-verde-tinta">
-              {grupo.etiqueta}
-            </h2>
-            <p class="font-dato text-dato-sm uppercase text-verde-monte">{grupo.resumen}</p>
-          </div>
+    grupos.map((grupo) => (
+      <section class="bg-aserrin">
+        <div class="plano py-10 lg:py-14">
+          <h2 class="revelar rotulo">{grupo.etiqueta}</h2>
 
-          <dl class="mt-10 border-t-hair border-verde-tinta">
-            {grupo.productos.map((producto) => (
-              <div
-                id={producto.slug}
-                class="grid scroll-mt-28 gap-x-8 gap-y-3 border-b-hair border-verde-musgo/50 py-7 lg:grid-cols-[18rem_1fr_14rem]"
-              >
-                <dt>
-                  <span class="font-dato text-spec-sm uppercase text-verde-monte">
-                    {String(producto.orden).padStart(2, '0')}
-                  </span>
-                  <span class="mt-1 block text-display-2 ancho-normal text-verde-tinta">
-                    {producto.nombre}
-                  </span>
-                </dt>
-                <dd class="max-w-medida text-base text-verde-tinta">{producto.que_es}</dd>
-                <dd class="font-dato text-dato-sm text-verde-monte lg:text-right">
-                  <span class="block uppercase">
-                    {producto.unidad ? `Se vende por ${producto.unidad}` : 'Se cotiza por volumen'}
-                  </span>
-                  <span class="mt-2 block">
-                    {producto.especies.map((slug, posicion) => (
-                      <>
-                        {posicion > 0 && <span aria-hidden="true"> · </span>}
-                        <a href={`/especies/${slug}`} class="enlace">
-                          {nombreEspecie(slug)}
-                        </a>
-                      </>
-                    ))}
-                  </span>
-                </dd>
-              </div>
+          <ul class="collage mt-8 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+            {grupo.productos.map((producto, i) => (
+              <li id={producto.slug} class="tarjeta revelar" style={`--retraso: ${i * 100}ms`}>
+                <div class="marco-especie">
+                  <MarcadorFoto foto={producto.foto} tono="monte" proporcion="3/2" />
+                </div>
+                <p class="mt-4 text-display-2 text-verde-tinta">{producto.nombre}</p>
+                <p class="mt-1.5 text-sm text-verde-monte">
+                  {producto.especies.map(nombreEspecie).filter(Boolean).join(' · ')}
+                </p>
+                <p class="mt-1 text-sm text-verde-monte">
+                  {producto.unidad ? `Se vende por ${producto.unidad}` : 'Se cotiza por volumen'}
+                </p>
+              </li>
             ))}
-          </dl>
+          </ul>
         </div>
       </section>
     ))
   }
 
-  <!-- Los cuatro servicios de procesamiento, al final -->
-  <section class="bg-verde-tinta py-20 lg:py-28">
-    <div class="plano">
-      <TituloSeccion rotulo="Procesamiento" variante="claro">
-        Lo hacemos a tu especificación
-        <p slot="cuerpo" class="max-w-medida text-lead text-cal">
-          Cualquiera de los {PRODUCTOS_CANTIDAD} productos puede salir con estos cuatro pasos. Es lo
-          que separa una planta de una bodega.
-        </p>
-      </TituloSeccion>
-
-      <dl class="mt-12 border-t-hair border-verde-musgo">
-        {
-          servicios.map((servicio) => (
-            <div class="grid gap-x-8 gap-y-2 border-b-hair border-verde-musgo/60 py-6 lg:grid-cols-[16rem_1fr_18rem]">
-              <dt class="text-display-2 ancho-normal text-cal">{servicio.nombre}</dt>
-              <dd class="max-w-medida text-base text-aserrin">{servicio.que_hace}</dd>
-              <dd class="font-dato text-dato-sm uppercase text-aserrin lg:text-right">
-                {servicio.especificacion}
-              </dd>
-            </div>
-          ))
-        }
-      </dl>
-
-      <div class="mt-12 flex flex-wrap gap-3">
-        <a href="/cotizar" class="boton-cotizar">
-          Pedir cotización
-          <span class="flecha" aria-hidden="true">&rarr;</span>
-        </a>
-        <a href="/proceso" class="boton-linea-claro">Ver el proceso de la planta</a>
-      </div>
+  <section class="bg-verde-tinta text-cal">
+    <div class="plano py-12 lg:py-16">
+      <AyudaWhatsApp mensaje="Buenas. Estoy viendo el catálogo de productos y quiero preguntar precio." />
     </div>
   </section>
 </Base>
