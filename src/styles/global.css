@@ -11,6 +11,14 @@
   src: url('/fonts/libre-franklin-latin.woff2') format('woff2-variations');
 }
 
+@font-face {
+  font-family: 'Big Shoulders Recortada';
+  font-style: normal;
+  font-weight: 600 800;
+  font-display: swap;
+  src: url('/fonts/big-shoulders-latin.woff2') format('woff2-variations');
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

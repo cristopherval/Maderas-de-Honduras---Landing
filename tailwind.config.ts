@@ -59,6 +59,12 @@ export default {
         display: ['Franklin Recortada', 'Helvetica Neue', 'Arial', 'sans-serif'],
         cuerpo: ['Franklin Recortada', 'Helvetica Neue', 'Arial', 'sans-serif'],
         dato: ['Franklin Recortada', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        /**
+         * Rótulo de marca. Condensada y alta, del género de la letra pintada
+         * en señalización de planta. Solo en versalitas y en muy pocas
+         * palabras: no es una familia de texto.
+         */
+        marca: ['Big Shoulders Recortada', 'Arial Narrow', 'sans-serif'],
       },
 
       /**

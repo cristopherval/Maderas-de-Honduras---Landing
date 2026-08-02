@@ -1,6 +1,5 @@
 ---
 import Base from '@/layouts/Base.astro';
-import AyudaWhatsApp from '@/components/AyudaWhatsApp.astro';
 import MarcadorFoto from '@/components/MarcadorFoto.astro';
 import { obtenerEspecies, productosPorCategoria } from '@/lib/contenido';
 import { NOTA_VOLUMEN } from '@/data/empresa';
@@ -58,9 +57,4 @@ const nombreEspecie = (slug: string): string | undefined =>
     ))
   }
 
-  <section class="bg-verde-tinta text-cal">
-    <div class="plano py-12 lg:py-16">
-      <AyudaWhatsApp mensaje="Buen día. Estoy viendo el catálogo y quisiera consultar precio." />
-    </div>
-  </section>
 </Base>

@@ -147,11 +147,19 @@ const fotoPlanta = {
     </div>
   </section>
 
-  <!-- Nosotros · aserrín -->
+  {/* Nosotros · aserrín. Único rótulo del sitio que va en grande: en escritorio
+      pasa a tamaño display en vez del rótulo chico de las demás secciones. */}
   <section class="bg-aserrin">
     <div class="plano grid gap-10 py-14 lg:grid-cols-2 lg:items-center lg:gap-14 lg:py-20">
       <div>
-        <h2 class="revelar rotulo">Nosotros</h2>
+        {/* Único lugar del sitio con la condensada de rótulo. En versalitas y
+            con el tracking abierto lee como letra pintada en la planta. */}
+        <h2
+          class="revelar font-marca uppercase leading-[0.9] text-verde-tinta text-[2.75rem] tracking-[0.02em] lg:text-[5.5rem]"
+          style="font-weight: 800"
+        >
+          Nosotros
+        </h2>
         <p class="mt-6 max-w-medida text-lead text-verde-tinta">
           {ANIOS_EN_EL_RUBRO} años dentro del rubro forestal. Se inició revendiendo madera, después
           alquilando locales con maquinaria, para después tener una planta procesadora propia desde

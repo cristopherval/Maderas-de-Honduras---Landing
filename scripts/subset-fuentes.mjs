@@ -43,6 +43,20 @@ const TRABAJOS = [
     ejes: { wght: { min: 400, max: 700 } },
     nota: 'todo el sitio — wght 400..700',
   },
+  {
+    /**
+     * Rótulo de marca: condensada, alta y estrecha, del género de la letra
+     * pintada en maquinaria y señalización de planta. Se usa en muy pocas
+     * palabras y siempre en versalitas, así que el juego de caracteres se
+     * recorta al mínimo y pesa casi nada.
+     */
+    entrada:
+      '@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2',
+    salida: 'big-shoulders-latin.woff2',
+    ejes: { wght: { min: 600, max: 800 } },
+    caracteres: 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZÁÉÍÓÚÜ0123456789 .,·-—',
+    nota: 'rótulo de marca — solo versalitas, wght 600..800',
+  },
 ];
 
 await mkdir(destino, { recursive: true });
@@ -50,7 +64,7 @@ await mkdir(destino, { recursive: true });
 for (const trabajo of TRABAJOS) {
   const origen = path.join(raiz, 'node_modules', trabajo.entrada);
   const original = await readFile(origen);
-  const recortada = await subsetFont(original, JUEGO_CARACTERES, {
+  const recortada = await subsetFont(original, trabajo.caracteres ?? JUEGO_CARACTERES, {
     targetFormat: 'woff2',
     ...(trabajo.ejes ? { variationAxes: trabajo.ejes } : {}),
   });
